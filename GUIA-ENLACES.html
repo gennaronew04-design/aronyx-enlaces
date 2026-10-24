@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Cómo hacer tu propia página de enlaces</title>
+<style>
+  @page {
+    size: A4;
+    margin: 2.2cm 2cm 2.4cm 2cm;
+    @bottom-center {
+      content: "Cómo hacer tu propia página de enlaces · Página " counter(page) " de " counter(pages);
+      font-family: "Noto Sans", sans-serif;
+      font-size: 8.5pt;
+      color: #8a8a96;
+    }
+  }
+  @page portada { margin: 0; @bottom-center { content: none; } }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Noto Sans", "DejaVu Sans", sans-serif;
+    color: #23232b;
+    font-size: 11.5pt;
+    line-height: 1.55;
+  }
+
+  /* ---------- PORTADA ---------- */
+  .portada {
+    page: portada;
+    height: 29.7cm;
+    background: #101016;
+    color: #f2f2f5;
+    text-align: center;
+    padding: 6.2cm 2.4cm 0 2.4cm;
+    page-break-after: always;
+  }
+  .portada .marco {
+    border: 1.5px solid #c9a86a;
+    border-radius: 18px;
+    padding: 1.6cm 1.1cm 1.4cm 1.1cm;
+  }
+  .portada .etiqueta {
+    color: #c9a86a;
+    font-size: 11pt;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 0.9cm;
+  }
+  .portada h1 {
+    font-size: 30pt;
+    line-height: 1.25;
+    font-weight: bold;
+    margin-bottom: 0.7cm;
+  }
+  .portada .subtitulo {
+    color: #c6c6d0;
+    font-size: 13.5pt;
+    line-height: 1.5;
+  }
+  .portada .pie-portada {
+    margin-top: 1.5cm;
+    color: #8f8f9b;
+    font-size: 10.5pt;
+  }
+
+  /* ---------- CONTENIDO ---------- */
+  h2 {
+    font-size: 16.5pt;
+    color: #101016;
+    border-bottom: 2.5px solid #c9a86a;
+    padding-bottom: 5px;
+    margin: 26px 0 12px 0;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 12.5pt; margin: 16px 0 6px 0; color: #101016; }
+  p { margin-bottom: 10px; }
+  ul, ol { margin: 6px 0 12px 22px; }
+  li { margin-bottom: 5px; }
+  .paso {
+    background: #f5f1e8;
+    border-left: 4px solid #c9a86a;
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px;
+    margin: 14px 0;
+  }
+  .paso .num {
+    display: inline-block;
+    background: #101016;
+    color: #c9a86a;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 26px; height: 26px;
+    text-align: center;
+    line-height: 26px;
+    margin-right: 8px;
+    font-size: 11.5pt;
+  }
+  .paso .titulo-paso { font-weight: bold; font-size: 12.5pt; }
+  .nota {
+    background: #eef3ee;
+    border: 1px solid #cfe0cf;
+    border-radius: 10px;
+    padding: 11px 15px;
+    margin: 12px 0;
+    font-size: 10.8pt;
+  }
+  .nota strong { color: #2e5d2e; }
+  .direccion {
+    font-family: "DejaVu Sans Mono", monospace;
+    background: #ececf0;
+    border-radius: 6px;
+    padding: 1px 6px;
+    font-size: 10.5pt;
+    word-break: break-all;
+  }
+  pre {
+    font-family: "DejaVu Sans Mono", monospace;
+    font-size: 7.8pt;
+    line-height: 1.42;
+    background: #14141b;
+    color: #e8e8ee;
+    border-radius: 10px;
+    padding: 14px 16px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 12px 0;
+    page-break-inside: avoid;
+  }
+  .cierre {
+    margin-top: 30px;
+    background: #101016;
+    color: #f2f2f5;
+    border-radius: 12px;
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .cierre .grande { font-size: 13.5pt; font-weight: bold; color: #c9a86a; }
+  .evitar-salto { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ================= PORTADA ================= -->
+<div class="portada">
+  <div class="marco">
+    <div class="etiqueta">Guía paso a paso</div>
+    <h1>Cómo hacer tu propia<br>página de enlaces</h1>
+    <p class="subtitulo">Una página tuya, gratis, con todos tus enlaces en un solo lugar.<br>
+    Sin pagar servicios mensuales y sin saber programar.</p>
+    <p class="pie-portada">Solo necesitas tu teléfono y un correo electrónico.<br>Tiempo estimado: 15 a 20 minutos.</p>
+  </div>
+</div>
+
+<!-- ================= QUÉ ES ================= -->
+<h2>1 · Qué es una página de enlaces (y por qué tener la tuya)</h2>
+<p>Una <strong>página de enlaces</strong> es una página web sencilla que reúne, en botones grandes y fáciles de tocar, todos tus lugares en internet: tu Instagram, tu canal de video, tu tienda, tu WhatsApp, lo que tú quieras. En las redes sociales solo puedes poner <strong>un</strong> enlace en tu biografía… y ese enlace puede ser tu página, que lleva a todos los demás.</p>
+<p>Seguro has visto servicios que te dan una página así a cambio de una mensualidad, o gratis pero con su marca y sus límites. El problema: <strong>si ese servicio cae, cambia sus reglas o cierra, tu enlace muere con él</strong> y pierdes a toda la gente que llegaba por ahí.</p>
+<p>Con el método de esta guía tu página vive en <strong>tu propia cuenta gratuita</strong>, con <strong>tu propia dirección</strong>, y nadie te la puede apagar. Si mañana quieres cambiar un enlace, lo cambias tú en un minuto. El servicio que usaremos se llama <strong>GitHub</strong>: es gratuito, lleva años siendo el lugar donde se guarda el código de medio mundo, y su opción <strong>GitHub Pages</strong> publica tu página sin costo.</p>
+
+<div class="nota"><strong>Tranquilo:</strong> no necesitas computadora ni saber programar. Todo se hace desde el navegador de tu teléfono, copiando y pegando una plantilla que ya viene lista en esta guía.</div>
+
+<h2>2 · Lo que necesitas</h2>
+<ul>
+  <li>Tu teléfono con internet.</li>
+  <li>Un correo electrónico que uses de verdad (ahí llegará la confirmación de tu cuenta).</li>
+  <li>Tus enlaces a mano: copia en tus notas las direcciones de tus perfiles (Instagram, YouTube, TikTok, Facebook, tu tienda, etc.).</li>
+  <li>Una foto o logo cuadrado para encabezar tu página (puede ser tu foto de perfil de siempre).</li>
+</ul>
+
+<!-- ================= PASOS ================= -->
+<h2>3 · Manos a la obra: los 6 pasos</h2>
+
+<div class="paso evitar-salto">
+  <p><span class="num">1</span><span class="titulo-paso">Crea tu cuenta gratuita de GitHub</span></p>
+  <ol>
+    <li>Abre el navegador de tu teléfono y entra a <span class="direccion">github.com</span></li>
+    <li>Toca <strong>Sign up</strong> (Registrarse) y escribe tu correo, una contraseña y un <strong>nombre de usuario</strong>.</li>
+    <li>El nombre de usuario importa: será parte de tu dirección. Elige algo corto y parecido a tu usuario de redes. Si en redes eres <em>@tucuenta</em>, prueba <em>tucuenta</em>.</li>
+    <li>Completa la verificación (un rompecabezas sencillo) y luego abre tu correo para confirmar la cuenta con el código o enlace que te envíen.</li>
+  </ol>
+  <p>Al terminar, tu dirección base será algo como <span class="direccion">tunombre.github.io</span>, donde «tunombre» es el usuario que elegiste.</p>
+</div>
+
+<div class="paso evitar-salto">
+  <p><span class="num">2</span><span class="titulo-paso">Crea un repositorio público llamado «enlaces»</span></p>
+  <p>Un «repositorio» es simplemente la carpeta donde vivirá tu página. No te asustes con la palabra.</p>
+  <ol>
+    <li>Ya dentro de tu cuenta, toca el botón <strong>«+»</strong> de arriba y elige <strong>New repository</strong> (Nuevo repositorio). En la pantalla principal también suele aparecer un botón verde <strong>New</strong>.</li>
+    <li>En <strong>Repository name</strong> escribe exactamente: <span class="direccion">enlaces</span></li>
+    <li>Déjalo en <strong>Public</strong> (público). Es obligatorio para que la página se vea gratis.</li>
+    <li>Toca <strong>Create repository</strong> (Crear repositorio). No marques ninguna otra casilla.</li>
+  </ol>
+</div>
+
+<div class="paso">
+  <p><span class="num">3</span><span class="titulo-paso">Prepara tu página con la plantilla</span></p>
+  <p>Esta es la plantilla completa de tu página. Más abajo (paso 4) la vas a pegar tal cual en tu repositorio. Solo tienes que cambiar lo que va entre corchetes, por ejemplo <span class="direccion">[TU NOMBRE]</span>:</p>
+  <ul>
+    <li><span class="direccion">[TU NOMBRE]</span> → tu nombre o el de tu proyecto.</li>
+    <li><span class="direccion">[TU FRASE CORTA]</span> → una línea que diga qué haces («Música y videos», «Ventas y más», lo tuyo).</li>
+    <li><span class="direccion">[ENLACE A TU FOTO]</span> → la dirección de tu foto o logo. Truco fácil: usa la misma foto de tu perfil de una red social (ábrela, mantenla presionada y copia la dirección de la imagen). Si no tienes, borra esa línea completa.</li>
+    <li><span class="direccion">[TU ENLACE 1]</span>, <span class="direccion">[TU ENLACE 2]</span>… → tus direcciones reales, una por botón, con su nombre visible al lado.</li>
+    <li>¿Más botones? Copia una línea de botón completa y pégala debajo cambiando el enlace y el nombre. ¿Menos? Borra las que sobren.</li>
+  </ul>
+  <p><strong>Los colores</strong> se cambian en las primeras líneas del código, donde dice <span class="direccion">:root</span>: son variables con nombres claros (<span class="direccion">--fondo</span>, <span class="direccion">--acento</span>, <span class="direccion">--texto</span>…). Cambia el código de color (el que empieza con #) por el que quieras y toda la página se tiñe a juego.</p>
+</div>
+
+<h3>La plantilla (copia todo, desde la primera hasta la última línea)</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;[TU NOMBRE] — Mis enlaces&lt;/title&gt;
+&lt;style&gt;
+  :root{
+    --fondo: #0e0e12;        /* color de fondo de la página */
+    --tarjeta: #1b1b23;      /* color de los botones */
+    --borde: #2e2e3a;        /* borde de los botones */
+    --texto: #f2f2f5;        /* color de las letras */
+    --texto-suave: #b9b9c4;  /* letras secundarias */
+    --acento: #c9a86a;       /* color de detalle (foto y toques) */
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex; justify-content: center;
+    padding: 36px 16px;
+  }
+  .contenedor{ width:100%; max-width:420px; text-align:center; }
+  .foto{
+    width:112px; height:112px; border-radius:50%;
+    object-fit:cover; border:3px solid var(--acento);
+  }
+  h1{ font-size:27px; margin:16px 0 6px 0; }
+  .frase{ color:var(--texto-suave); font-size:15px; margin-bottom:26px; }
+  .boton{
+    display:block;
+    background: var(--tarjeta);
+    border:1px solid var(--borde);
+    color: var(--texto);
+    text-decoration:none;
+    font-size:17px; font-weight:bold;
+    padding:16px; border-radius:14px; margin:12px 0;
+  }
+  .boton:active{ border-color: var(--acento); }
+  .pie{ color:var(--texto-suave); font-size:12px; margin-top:26px; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;main class="contenedor"&gt;
+    &lt;img class="foto" src="[ENLACE A TU FOTO]" alt="Mi foto"&gt;
+    &lt;h1&gt;[TU NOMBRE]&lt;/h1&gt;
+    &lt;p class="frase"&gt;[TU FRASE CORTA: QUÉ HACES]&lt;/p&gt;
+
+    &lt;a class="boton" href="[TU ENLACE 1]"&gt;[NOMBRE DEL ENLACE 1]&lt;/a&gt;
+    &lt;a class="boton" href="[TU ENLACE 2]"&gt;[NOMBRE DEL ENLACE 2]&lt;/a&gt;
+    &lt;a class="boton" href="[TU ENLACE 3]"&gt;[NOMBRE DEL ENLACE 3]&lt;/a&gt;
+    &lt;a class="boton" href="[TU ENLACE 4]"&gt;[NOMBRE DEL ENLACE 4]&lt;/a&gt;
+
+    &lt;p class="pie"&gt;Gracias por visitar mi página&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+<div class="paso evitar-salto">
+  <p><span class="num">4</span><span class="titulo-paso">Sube la plantilla y enciende tu página</span></p>
+  <ol>
+    <li>Entra a tu repositorio <strong>enlaces</strong> y toca <strong>Add file</strong> (Añadir archivo) → <strong>Create new file</strong> (Crear archivo nuevo).</li>
+    <li>En el nombre del archivo escribe exactamente: <span class="direccion">index.html</span> (en minúsculas, sin espacios).</li>
+    <li>En el cuadro grande, <strong>pega la plantilla completa</strong> ya con tus datos cambiados.</li>
+    <li>Baja hasta el final y toca el botón verde <strong>Commit changes</strong> (Guardar cambios).</li>
+    <li>Ahora enciende la publicación: ve a <strong>Settings</strong> (Configuración) del repositorio → en el menú, <strong>Pages</strong>.</li>
+    <li>Donde dice <strong>Build and deployment</strong>, elige <strong>Deploy from a branch</strong>; en la rama selecciona <strong>main</strong> y en la carpeta <strong>/ (root)</strong>. Toca <strong>Save</strong> (Guardar).</li>
+  </ol>
+</div>
+
+<div class="paso evitar-salto">
+  <p><span class="num">5</span><span class="titulo-paso">Espera un momento y prueba tu dirección</span></p>
+  <p>GitHub tarda entre <strong>1 y 2 minutos</strong> en construir tu página la primera vez. Ten un poco de paciencia, respira, y luego abre en tu navegador tu dirección:</p>
+  <p style="text-align:center;"><span class="direccion">https://tunombre.github.io/enlaces/</span></p>
+  <p>Cambia «tunombre» por tu usuario de GitHub. Si ves tu página con tus botones: <strong>¡ya está viva!</strong> Toca cada botón y confirma que todos abren donde deben. Si ves un error 404, espera un minuto más y recarga; la primera vez es lo que más tarda.</p>
+</div>
+
+<div class="paso evitar-salto">
+  <p><span class="num">6</span><span class="titulo-paso">Pega tu dirección en todas tus bios</span></p>
+  <p>Este es el paso que lo cambia todo: un solo enlace en cada red, y ese enlace lleva a todos.</p>
+  <ul>
+    <li><strong>Instagram:</strong> ojo, importante — los enlaces de Instagram <strong>solo se pueden editar desde la aplicación del teléfono</strong> (en la web de computadora aparece bloqueado). En la app: tu perfil → <strong>Editar perfil</strong> → <strong>Sitio web</strong> (o la sección <strong>Enlaces</strong>) → pega tu dirección.</li>
+    <li><strong>TikTok:</strong> en la app: tu perfil → <strong>Editar perfil</strong> → <strong>Sitio web</strong> → pega tu dirección. Si tu cuenta aún no muestra ese campo, escribe la dirección en el texto de tu bio mientras tanto.</li>
+    <li><strong>YouTube:</strong> entra a YouTube Studio → <strong>Personalización</strong> → pestaña de enlaces o información del canal → agrega un enlace con título «Todos mis enlaces» y tu dirección. También puedes pegar la dirección en la descripción del canal.</li>
+    <li><strong>Facebook:</strong> en tu página: <strong>Editar</strong> → campo <strong>Sitio web</strong> → pega tu dirección. En los grupos o perfil donde se permita enlace, lo mismo.</li>
+  </ul>
+</div>
+
+<!-- ================= CONSEJOS ================= -->
+<h2>4 · Consejos para que tu página rinda</h2>
+<ul>
+  <li><strong>Pocos enlaces y en orden de importancia.</strong> El primero debe ser lo que más quieres que la gente haga (seguir tu canal principal, escribirte, comprar). Más de 6 o 7 botones cansa y la gente no toca ninguno.</li>
+  <li><strong>Nombres claros en los botones.</strong> «Mi canal de videos» o «Escríbeme por WhatsApp» funcionan mejor que un frío «Enlace».</li>
+  <li><strong>Revisa que todos abran.</strong> Una vez al mes, entra a tu propia página y toca cada botón. Un enlace roto es un seguidor perdido.</li>
+  <li><strong>La misma foto y el mismo nombre en todo.</strong> Que la gente reconozca tu página al instante como tuya.</li>
+  <li><strong>Comparte tu dirección también fuera de internet:</strong> en un código QR impreso, en tu tarjeta, en la descripción de tus videos.</li>
+</ul>
+
+<h2>5 · Cuando algo cambie: así actualizas tu página</h2>
+<p>Tu página se edita en el mismo lugar donde nació, cuando quieras y gratis:</p>
+<ol>
+  <li>Entra a tu repositorio <strong>enlaces</strong> en GitHub.</li>
+  <li>Toca el archivo <strong>index.html</strong> y luego el icono del <strong>lápiz</strong> (Editar).</li>
+  <li>Cambia el texto o la dirección que necesites, baja al final y toca <strong>Commit changes</strong>.</li>
+  <li>Espera un minuto y recarga tu página: el cambio ya está en vivo para todo el mundo, sin tener que tocar ninguna bio.</li>
+</ol>
+
+<div class="cierre">
+  <p class="grande">Tu página, tus reglas.</p>
+  <p>Desde hoy tienes una dirección tuya que no depende de nadie:<br>cuídala, compártela y hazla crecer.</p>
+</div>
+
+</body>
+</html>
