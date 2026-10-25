@@ -1,6 +1,6 @@
 /* LA SALA ARONYX — vista Viva: la imagen cinematográfica de la sala como
-   escena principal que REACCIONA al replay. Capas de luz por agente con la
-   misma semántica que las vistas 2D/3D (el mapa llega desde app.js, ya
+   escena principal que REACCIONA al EN VIVO. Capas de luz por agente con la
+   misma semántica que las vistas 2D/3D (el mapa llega desde vivo.js, ya
    calculado: no se duplica ninguna lógica), pulso de lava sobre el
    medallón, lámparas y braseros con parpadeo CSS, brasas ascendentes en
    canvas y parallax suave por capas.

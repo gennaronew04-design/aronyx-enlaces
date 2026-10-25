@@ -1,4 +1,4 @@
-/* LA SALA ARONYX — obsidiana, dorado y teal. Sin temas claros. */
+/* LA SALA ARONYX — EN VIVO. Obsidiana, dorado y teal. Sin temas claros. */
 :root{
   --fondo:#07080a;
   --panel:#0e1013;
@@ -29,43 +29,11 @@ h1{margin:0;font-size:22px;letter-spacing:2px}
   background:#3a2f10;color:var(--dorado-claro);border:1px solid var(--dorado);
   padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:1px;
 }
-.controles{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:end}
-.controles label{font-size:12px;color:var(--tenue);display:flex;flex-direction:column;gap:4px}
-select,button{
-  background:var(--panel2);color:var(--texto);border:1px solid var(--borde);
-  border-radius:8px;padding:9px 12px;font-size:15px;min-height:44px;
-}
-button{border-color:var(--dorado);color:var(--dorado-claro);font-weight:700;cursor:pointer}
-button:active{transform:scale(.98)}
-.fecha-replay{margin-top:8px;display:flex;gap:12px;align-items:baseline}
-#fecha-actual{font-size:19px;font-weight:700;color:var(--teal)}
 .tenue{color:var(--tenue);font-size:12px}
 main{padding:12px;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
 h2{font-size:17px;letter-spacing:1px;color:var(--dorado-claro);margin:4px 0 10px}
 .sala-wrap{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:8px}
-#sala{width:100%;height:auto;display:block}
 .nota-sala{margin:6px 2px 2px;font-size:12px;color:var(--tenue)}
-/* SVG de la sala */
-.suelo{fill:#0b0d10;stroke:#3a2f10;stroke-width:2}
-.suelo-interior{fill:#0e1013;stroke:#241e10;stroke-width:1}
-.hexagono{fill:#050505;stroke:var(--dorado);stroke-width:3}
-.runas-anillo{fill:var(--dorado);font-size:17px;letter-spacing:4px;opacity:.85}
-.parada-banner{fill:var(--rojo);font-size:21px;font-weight:800;text-anchor:middle;letter-spacing:2px}
-.desk-top{fill:#171a21;stroke:#8a6d2f;stroke-width:1}
-.desk-front{fill:#0d0f13;stroke:#3a2f10;stroke-width:1}
-.desk-algiz .desk-top{fill:#12211f;stroke:var(--teal)}
-.monitor{fill:#04070a;stroke:#1f7a6e;stroke-width:1}
-.monitor2{fill:#04070a;stroke:#8a6d2f;stroke-width:1}
-.spark{fill:none;stroke:var(--teal);stroke-width:1.4}
-.spark-spy{fill:none;stroke:var(--dorado);stroke-width:1;opacity:.75}
-.capucha{fill:#101014;stroke:var(--dorado);stroke-width:1.4}
-.cara{fill:#000}
-.ojo{fill:var(--dorado-claro)}
-.placa{fill:#000;stroke:var(--dorado);stroke-width:1}
-.placa-texto{fill:var(--dorado-claro);font-size:11px;font-weight:700;text-anchor:middle;letter-spacing:.5px}
-.runa{fill:var(--dorado);font-size:14px;text-anchor:middle}
-.algiz-dd{fill:var(--teal);font-size:11px;font-weight:700;text-anchor:middle}
-.plataforma{fill:#101613;stroke:#1f7a6e;stroke-width:1}
 /* Panel */
 .panel{
   display:grid;grid-template-columns:1fr 1fr;gap:10px;
@@ -74,96 +42,15 @@ h2{font-size:17px;letter-spacing:1px;color:var(--dorado-claro);margin:4px 0 10px
 .tarjeta-panel{background:var(--panel2);border:1px solid var(--borde);border-radius:10px;padding:10px}
 .tarjeta-panel .etq{display:block;font-size:11px;color:var(--tenue);letter-spacing:1px;text-transform:uppercase}
 .tarjeta-panel strong{font-size:19px}
-#curva{grid-column:1/-1;width:100%;background:#05070a;border:1px solid var(--borde);border-radius:10px}
 .pos{color:var(--verde)} .neg{color:var(--rojo)}
-/* Agentes */
+/* Grid de tarjetas (estudio de agentes en vivo) */
 .agentes{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:700px){.agentes{grid-template-columns:1fr 1fr}.panel{grid-template-columns:repeat(4,1fr)}}
-.agente{
-  background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:12px;cursor:pointer;
-}
-.agente .cab{display:flex;align-items:center;gap:10px}
-.agente .runa-g{font-size:26px;color:var(--dorado)}
-.agente h3{margin:0;font-size:17px;letter-spacing:1px}
-.agente .est{font-size:12px;color:var(--teal)}
-.agente .stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:14px}
-.agente .stats b{display:block;font-size:16px}
-.agente .stats span{font-size:11px;color:var(--tenue)}
-.luz{display:inline-block;width:11px;height:11px;border-radius:50%;background:#555;margin-left:auto}
-.ficha{display:none;margin-top:10px;border-top:1px dashed var(--borde);padding-top:8px;cursor:default}
-.agente.abierta .ficha{display:block}
-.ficha table{width:100%;border-collapse:collapse;font-size:12.5px}
-.ficha td,.ficha th{padding:4px 3px;border-bottom:1px solid #1c1a12;text-align:left}
-.ficha .abierta-tag{color:var(--teal);font-weight:700}
-/* Calendario */
-.calendario{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-dow{font-size:11px;color:var(--tenue);text-align:center;padding:2px}
-.cal-dia{
-  min-height:46px;border-radius:8px;background:var(--panel2);border:1px solid #1c1a12;
-  padding:4px;font-size:11px;cursor:pointer;position:relative;
-}
-.cal-dia .num{font-weight:700;font-size:12px}
-.cal-dia .chg{display:block;margin-top:2px}
-.cal-dia.hoy{outline:2px solid var(--dorado)}
-.cal-dia.fuera{opacity:.28;cursor:default}
-.cal-detalle{min-height:18px;color:var(--dorado-claro);font-size:14px}
 footer{padding:14px;color:var(--tenue);font-size:12.5px;text-align:center;border-top:1px solid var(--borde)}
-/* Vista 2D / 3D */
-.sala-vistas{display:flex;align-items:center;gap:8px;margin:2px 2px 8px}
-.sala-vistas-etq{font-size:12px;color:var(--tenue);letter-spacing:1px;text-transform:uppercase}
-.vista-btn{min-height:38px;padding:6px 16px;font-size:14px}
-.vista-btn.activo{background:#3a2f10;color:var(--dorado-claro);border-color:var(--dorado)}
-.vista-btn:disabled{opacity:.4;cursor:not-allowed}
-#sala3d{width:100%;aspect-ratio:10/7;display:block;background:#05070a;border:1px solid #1c1a12;border-radius:10px;touch-action:none;cursor:grab}
-#sala3d:active{cursor:grabbing}
-/* Chat con los agentes */
-.chat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.chat-tab{min-height:38px;padding:6px 12px;font-size:13.5px}
-.chat-tab.activo{background:#3a2f10;color:var(--dorado-claro);border-color:var(--dorado)}
-.chat-ventana{
-  display:flex;flex-direction:column;gap:8px;max-height:330px;overflow-y:auto;
-  background:var(--panel);border:1px solid var(--borde);border-radius:12px;padding:10px;
-}
-.chat-ventana:empty{display:none}
-.msg{max-width:88%;padding:8px 11px;border-radius:12px;font-size:14px;line-height:1.45;white-space:pre-line}
-.msg .quien{display:block;font-size:11px;color:var(--tenue);letter-spacing:.5px;margin-bottom:2px;text-transform:uppercase}
-.msg.tu{align-self:flex-end;background:#12211f;border:1px solid #1f7a6e}
-.msg.agente{align-self:flex-start;background:var(--panel2);border:1px solid var(--borde)}
-.chat-chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-.chip{min-height:36px;padding:5px 11px;font-size:13px;border-radius:999px}
-.chat-form{display:flex;gap:8px}
-.chat-form input{
-  flex:1;background:var(--panel2);color:var(--texto);border:1px solid var(--borde);
-  border-radius:8px;padding:9px 12px;font-size:15px;min-height:44px;min-width:0;
-}
-/* Modo presentación 9:16 */
-#presentacion{position:fixed;inset:0;background:#000;z-index:60;display:flex;align-items:center;justify-content:center}
-#presentacion[hidden]{display:none}
-body.presentacion{overflow:hidden}
-.pres-escenario{
-  aspect-ratio:9/16;width:min(100vw,56.25vh);height:min(100vh,177.78vw);
-  background:var(--fondo);display:flex;flex-direction:column;gap:10px;
-  padding:14px 12px;overflow:hidden;
-}
-.pres-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
-.pres-cab h2{margin:0;font-size:20px;letter-spacing:2px;color:var(--texto)}
-.pres-sala .sala-wrap{padding:6px}
-.pres-sala .sala-vistas,.pres-sala .nota-sala{display:none}
-.pres-fecha{font-size:34px;font-weight:800;color:var(--teal);text-align:center;letter-spacing:1px}
-.pres-numeros{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.pres-numeros>div{background:var(--panel2);border:1px solid var(--borde);border-radius:10px;padding:8px 6px;text-align:center}
-.pres-numeros span{display:block;font-size:10px;color:var(--tenue);letter-spacing:1px}
-.pres-numeros strong{font-size:17px}
-.pres-agentes{display:flex;flex-direction:column;gap:6px}
-.pres-ag{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--borde);border-radius:9px;padding:7px 10px;font-size:14px}
-.pres-ag .luz{margin-left:0}
-.pres-ag span:last-child{margin-left:auto}
-.pres-nota{text-align:center;color:var(--tenue);font-size:12px;margin:0}
-#btn-salir-pres{margin-top:auto}
-/* Vista Viva: la imagen cinematográfica como escena que reacciona al replay.
-   La capa .viva-parallax tiene el aspecto EXACTO de la imagen (3:2) y la
-   desborda centrada: los halos viven en % de la imagen y quedan pegados a
-   cada encapuchado sea cual sea el recorte del contenedor. */
+/* Vista Viva: la imagen cinematográfica como portada que reacciona al
+   EN VIVO. La capa .viva-parallax tiene el aspecto EXACTO de la imagen
+   (3:2) y la desborda centrada: los halos viven en % de la imagen y quedan
+   pegados a cada encapuchado sea cual sea el recorte del contenedor. */
 .sala-viva{
   position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;
   background:#05070a;border:1px solid #1c1a12;border-radius:10px;touch-action:pan-y;
@@ -231,14 +118,6 @@ body.presentacion{overflow:hidden}
 @keyframes vivaLamp{0%,100%{opacity:.75}38%{opacity:1}55%{opacity:.6}72%{opacity:.95}}
 @keyframes vivaFuego{from{opacity:.65;transform:translate(-50%,-50%) scale(.94)}to{opacity:1;transform:translate(-50%,-50%) scale(1.07)}}
 @keyframes vivaLava{from{opacity:.55;transform:translate(-50%,-50%) scale(.965)}to{opacity:.95;transform:translate(-50%,-50%) scale(1.03)}}
-/* En presentación 9:16 la Viva se recorta en vertical con el foco en el
-   medallón (el JS centra la capa sobre el 57 % de la imagen). */
-body.presentacion .sala-viva{aspect-ratio:5/4}
-body.presentacion .viva-parallax{left:50%;top:50%;width:auto;height:118%;aspect-ratio:3/2}
-/* En el recorte vertical los puestos laterales quedan al borde: sus placas
-   se desplazan hacia dentro para leerse enteras. */
-body.presentacion .viva-halo[data-agente="ANSUZ"] .viva-placa{transform:translateX(-14%)}
-body.presentacion .viva-halo[data-agente="EHWAZ"] .viva-placa{transform:translateX(-86%)}
 @media (prefers-reduced-motion: reduce){
   .viva-luz,.viva-medallon,.viva-halo .viva-glow{animation:none !important}
 }
