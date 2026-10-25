@@ -160,3 +160,85 @@ body.presentacion{overflow:hidden}
 .pres-ag span:last-child{margin-left:auto}
 .pres-nota{text-align:center;color:var(--tenue);font-size:12px;margin:0}
 #btn-salir-pres{margin-top:auto}
+/* Vista Viva: la imagen cinematográfica como escena que reacciona al replay.
+   La capa .viva-parallax tiene el aspecto EXACTO de la imagen (3:2) y la
+   desborda centrada: los halos viven en % de la imagen y quedan pegados a
+   cada encapuchado sea cual sea el recorte del contenedor. */
+.sala-viva{
+  position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;
+  background:#05070a;border:1px solid #1c1a12;border-radius:10px;touch-action:pan-y;
+}
+.viva-parallax{position:absolute;left:0;top:50%;width:100%;aspect-ratio:3/2;will-change:transform}
+.viva-parallax img{width:100%;height:100%;display:block;object-fit:cover}
+.viva-tinte{
+  position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .8s;
+  background:radial-gradient(ellipse at 50% 30%, rgba(248,113,113,.17), rgba(120,10,10,.10) 60%, rgba(60,0,0,.05));
+}
+.sala-viva.parada .viva-tinte{opacity:1}
+.viva-luz{
+  position:absolute;width:7%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  mix-blend-mode:screen;pointer-events:none;filter:blur(2px);
+}
+.viva-lampara{background:radial-gradient(circle, rgba(45,212,191,.55) 0%, rgba(45,212,191,0) 70%);animation:vivaLamp 3.9s ease-in-out infinite}
+.viva-brasero{background:radial-gradient(circle, rgba(255,158,64,.6) 0%, rgba(255,94,0,0) 70%);animation:vivaFuego 1.5s ease-in-out infinite alternate}
+.viva-medallon{
+  position:absolute;width:37%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  mix-blend-mode:screen;pointer-events:none;
+  background:radial-gradient(circle, rgba(255,170,70,.40) 0%, rgba(255,110,10,.14) 46%, rgba(255,110,10,0) 70%);
+  animation:vivaLava 5.2s ease-in-out infinite alternate;
+}
+.viva-halo{position:absolute;width:24%;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
+.viva-halo-algiz{width:27%}
+.viva-glow{
+  position:absolute;inset:0;border-radius:50%;mix-blend-mode:screen;
+  background:radial-gradient(circle, rgba(150,140,120,.34) 0%, rgba(150,140,120,0) 66%);
+  opacity:.12;transition:opacity .6s ease, background .6s ease;
+}
+.viva-halo[data-estado="abierta"] .viva-glow{
+  opacity:.95;animation:vivaPulso 2.3s ease-in-out infinite;
+  background:radial-gradient(circle, rgba(45,212,191,.62) 0%, rgba(45,212,191,.18) 46%, rgba(45,212,191,0) 70%);
+}
+.viva-halo[data-estado="gano"] .viva-glow{
+  opacity:.95;background:radial-gradient(circle, rgba(52,211,153,.6) 0%, rgba(52,211,153,.16) 46%, rgba(52,211,153,0) 70%);
+}
+.viva-halo[data-estado="perdio"] .viva-glow{
+  opacity:.95;background:radial-gradient(circle, rgba(248,113,113,.6) 0%, rgba(248,113,113,.16) 46%, rgba(248,113,113,0) 70%);
+}
+.viva-halo-algiz .viva-glow{
+  opacity:.75;background:radial-gradient(circle, rgba(45,212,191,.5) 0%, rgba(45,212,191,.14) 46%, rgba(45,212,191,0) 70%);
+}
+.viva-halo-algiz.parada .viva-glow{
+  opacity:1;animation:vivaAlarma 1s ease-in-out infinite;
+  background:radial-gradient(circle, rgba(248,113,113,.75) 0%, rgba(248,113,113,.22) 48%, rgba(248,113,113,0) 72%);
+}
+.viva-placa{
+  position:absolute;left:50%;top:74%;transform:translateX(-50%);white-space:nowrap;
+  background:rgba(2,3,4,.86);border:1px solid var(--dorado);color:var(--dorado-claro);
+  font-size:11px;font-weight:700;letter-spacing:.6px;padding:2.5px 9px;border-radius:999px;
+}
+.viva-halo-algiz .viva-placa{border-color:var(--teal);top:64%}
+.viva-halo-algiz.parada .viva-placa{border-color:var(--rojo);color:#ffb4b4}
+/* Las placas de THURISAZ y SOWILO bajan un escalón para no chocar con la de
+   ALGIZ (la ancha, con el DD) en pantallas estrechas. */
+.viva-halo[data-agente="THURISAZ"] .viva-placa,
+.viva-halo[data-agente="SOWILO"] .viva-placa{top:90%}
+@media (max-width:560px){
+  .viva-placa{font-size:9.5px;padding:2px 6px;letter-spacing:.2px}
+}
+.viva-brasas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+@keyframes vivaPulso{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+@keyframes vivaAlarma{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes vivaLamp{0%,100%{opacity:.75}38%{opacity:1}55%{opacity:.6}72%{opacity:.95}}
+@keyframes vivaFuego{from{opacity:.65;transform:translate(-50%,-50%) scale(.94)}to{opacity:1;transform:translate(-50%,-50%) scale(1.07)}}
+@keyframes vivaLava{from{opacity:.55;transform:translate(-50%,-50%) scale(.965)}to{opacity:.95;transform:translate(-50%,-50%) scale(1.03)}}
+/* En presentación 9:16 la Viva se recorta en vertical con el foco en el
+   medallón (el JS centra la capa sobre el 57 % de la imagen). */
+body.presentacion .sala-viva{aspect-ratio:5/4}
+body.presentacion .viva-parallax{left:50%;top:50%;width:auto;height:118%;aspect-ratio:3/2}
+/* En el recorte vertical los puestos laterales quedan al borde: sus placas
+   se desplazan hacia dentro para leerse enteras. */
+body.presentacion .viva-halo[data-agente="ANSUZ"] .viva-placa{transform:translateX(-14%)}
+body.presentacion .viva-halo[data-agente="EHWAZ"] .viva-placa{transform:translateX(-86%)}
+@media (prefers-reduced-motion: reduce){
+  .viva-luz,.viva-medallon,.viva-halo .viva-glow{animation:none !important}
+}

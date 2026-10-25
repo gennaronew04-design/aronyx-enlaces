@@ -149,9 +149,8 @@ function render() {
   renderPresentacion(est);
 }
 
-/* ---------- puente con la vista 3D (mismos estados que la 2D) ---------- */
+/* ---------- puente con las vistas 3D y Viva (mismos estados que la 2D) ---------- */
 function publicarEstados3D(est) {
-  if (!window.Sala3D || !Sala3D.setEstados) return;
   const mapa = {};
   for (const ag of AGENTES) {
     if (ag.algiz) {
@@ -165,7 +164,8 @@ function publicarEstados3D(est) {
     else if (abr.length) estado3d = "abierta";
     mapa[ag.nombre] = { estado: estado3d };
   }
-  try { Sala3D.setEstados(mapa); } catch (e) { /* si la 3D falla, la 2D sigue */ }
+  if (window.Sala3D && Sala3D.setEstados) { try { Sala3D.setEstados(mapa); } catch (e) { /* si la 3D falla, la 2D sigue */ } }
+  if (window.SalaViva && SalaViva.setEstados) { try { SalaViva.setEstados(mapa); } catch (e) { /* la Viva es una capa visual: nunca rompe el replay */ } }
 }
 
 /* ---------- modo presentación 9:16 ---------- */
@@ -196,6 +196,10 @@ function activarPresentacion() {
   $("presentacion").hidden = false;
   document.body.classList.add("presentacion");
   window.scrollTo(0, 0);
+  // La presentación usa la Sala Viva (la cara cinematográfica de la sala);
+  // al salir se restaura la vista que estuviera activa.
+  if (S.vista !== "viva") { S.vistaAntesPres = S.vista; fijarVista("viva"); }
+  else if (window.SalaViva && SalaViva.redimensionar) SalaViva.redimensionar();
   if (window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
   render();
 }
@@ -207,20 +211,26 @@ function salirPresentacion() {
   }
   $("presentacion").hidden = true;
   document.body.classList.remove("presentacion");
+  if (S.vistaAntesPres) { const v = S.vistaAntesPres; S.vistaAntesPres = null; fijarVista(v); }
+  else if (window.SalaViva && SalaViva.redimensionar) SalaViva.redimensionar();
   if (window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
   render();
 }
 
-/* ---------- vista 2D / 3D ---------- */
+/* ---------- vistas de la sala: Viva (principal) / 3D / 2D ---------- */
 function fijarVista(v) {
   S.vista = v;
-  const es3d = v === "3d";
+  const esViva = v === "viva", es3d = v === "3d";
+  $("wrap-viva").hidden = !esViva;
   $("wrap-3d").hidden = !es3d;
-  $("wrap-2d").hidden = es3d;
+  $("wrap-2d").hidden = esViva || es3d;
+  $("btn-vista-viva").classList.toggle("activo", esViva);
   $("btn-vista-3d").classList.toggle("activo", es3d);
-  $("btn-vista-2d").classList.toggle("activo", !es3d);
+  $("btn-vista-2d").classList.toggle("activo", !esViva && !es3d);
   if (window.Sala3D && Sala3D.setVisible) Sala3D.setVisible(es3d);
+  if (window.SalaViva && SalaViva.setVisible) SalaViva.setVisible(esViva);
   if (es3d && window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
+  if (esViva && window.SalaViva && SalaViva.redimensionar) SalaViva.redimensionar();
 }
 function dibujarCurva(est) {
   const cv = $("curva"), ctx = cv.getContext("2d");
@@ -564,15 +574,17 @@ async function iniciar() {
     S.velocidad = Number(e.target.value);
     if (S.timer) reproducir();
   });
-  // vista 3D (principal) / 2D (ligera): si WebGL no está, se queda la 2D sin error
+  // vistas de la sala: Viva (principal) / 3D / 2D — si WebGL no está,
+  // el botón 3D se desactiva sin error y quedan Viva y 2D
   let ok3d = false;
   if (window.Sala3D && Sala3D.iniciar) {
     try { ok3d = !!Sala3D.iniciar($("sala3d")); } catch (e) { ok3d = false; }
   }
   if (!ok3d) { $("btn-vista-3d").disabled = true; $("btn-vista-3d").title = "WebGL no disponible en este navegador"; }
+  $("btn-vista-viva").addEventListener("click", () => fijarVista("viva"));
   $("btn-vista-3d").addEventListener("click", () => fijarVista("3d"));
   $("btn-vista-2d").addEventListener("click", () => fijarVista("2d"));
-  fijarVista(ok3d ? "3d" : "2d");
+  fijarVista("viva");
   // modo presentación 9:16
   $("btn-presentacion").addEventListener("click", activarPresentacion);
   $("btn-salir-pres").addEventListener("click", salirPresentacion);
@@ -581,6 +593,7 @@ async function iniciar() {
   window.addEventListener("resize", () => {
     render();
     if (window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
+    if (window.SalaViva && SalaViva.redimensionar) SalaViva.redimensionar();
   });
   if (sesiones.length) { sel.value = sesiones[0].id; await cargarSesion(sesiones[0].id); }
 }
