@@ -242,3 +242,14 @@ body.presentacion .viva-halo[data-agente="EHWAZ"] .viva-placa{transform:translat
 @media (prefers-reduced-motion: reduce){
   .viva-luz,.viva-medallon,.viva-halo .viva-glow{animation:none !important}
 }
+
+/* Sala en vivo (Fase 6) */
+.lv-tablero{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lv-precio{background:var(--panel2);border:1px solid var(--borde);border-radius:10px;padding:10px;text-align:center}
+.lv-precio .sim{font-weight:700;letter-spacing:1px}
+.lv-precio .pr{font-size:18px;display:block}
+.lv-precio .cb{font-size:12px}
+.lv-feed{list-style:none;padding:0;margin:0}
+.lv-feed li{padding:6px 10px;border-bottom:1px solid var(--borde);font-size:13px}
+.lv-feed .fh{color:var(--tenue);margin-right:8px;font-size:11px}
+@media(max-width:700px){.lv-tablero{grid-template-columns:repeat(2,1fr)}}

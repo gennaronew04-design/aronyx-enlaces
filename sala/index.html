@@ -116,6 +116,40 @@
     <canvas id="curva" height="120"></canvas>
   </section>
 
+  <section class="en-vivo" id="en-vivo">
+    <h2>🔴 EN VIVO — PAPEL <span class="distintivo">PAPEL — SIN DINERO REAL</span></h2>
+    <p class="nota-sala">La misma sala operando el mercado actual, día a día: señal al cierre, ALGIZ valida, entrada a la apertura siguiente. Cartera papel independiente del replay. <span id="ev-actualizado" class="tenue"></span></p>
+    <div class="panel">
+      <div class="tarjeta-panel"><span class="etq">Equity en vivo</span><strong id="ev-equity">—</strong></div>
+      <div class="tarjeta-panel"><span class="etq">P&amp;L acumulado</span><strong id="ev-pnl">—</strong></div>
+      <div class="tarjeta-panel"><span class="etq">Caja</span><strong id="ev-cash">—</strong></div>
+      <div class="tarjeta-panel"><span class="etq">Última sesión</span><strong id="ev-sesion">—</strong></div>
+    </div>
+    <h3>Posiciones abiertas</h3>
+    <div id="ev-posiciones" class="ev-lista"><p class="tenue">—</p></div>
+    <h3>Señales pendientes (las ejecuta ALGIZ a la próxima apertura)</h3>
+    <div id="ev-pendientes" class="ev-lista"><p class="tenue">—</p></div>
+  </section>
+
+  <section class="sala-viva-web" id="sala-en-vivo">
+    <h2>🏛️ SALA EN VIVO — la sala trabajando <span class="distintivo">DEMO — MERCADO REAL · SIN DINERO REAL</span></h2>
+    <p class="nota-sala"><span id="lv-mercado">—</span> Nuestro bróker demo propio: precios reales → ejecución simulada → cuenta demo. La capa intradía observa y marca a mercado; las entradas y salidas las decide la corrida de cierre (swing diario).</p>
+    <div class="panel">
+      <div class="tarjeta-panel"><span class="etq">Equity flotante (a mercado)</span><strong id="lv-equity">—</strong></div>
+      <div class="tarjeta-panel"><span class="etq">P&amp;L flotante total</span><strong id="lv-pnl">—</strong></div>
+      <div class="tarjeta-panel"><span class="etq">Posiciones demo abiertas</span><strong id="lv-npos">—</strong></div>
+      <div class="tarjeta-panel"><span class="etq">Refresco</span><strong>~60 s</strong></div>
+    </div>
+    <h3>Tablero de precios en vivo</h3>
+    <div id="lv-precios" class="lv-tablero"><p class="tenue">—</p></div>
+    <h3>Posiciones demo — P&amp;L del momento</h3>
+    <div id="lv-posiciones" class="ev-lista"><p class="tenue">—</p></div>
+    <h3>Los agentes, estudiando ahora</h3>
+    <div id="lv-estudio" class="agentes"><p class="tenue">—</p></div>
+    <h3>Actividad de la sala</h3>
+    <ul id="lv-feed" class="lv-feed"><li class="tenue">—</li></ul>
+  </section>
+
   <section>
     <h2>Los agentes</h2>
     <div id="agentes" class="agentes"></div>
@@ -170,5 +204,76 @@
 <script src="static/sala3d.js"></script>
 <script src="static/salaviva.js"></script>
 <script src="static/app.js"></script>
+<script>
+/* Panel EN VIVO — lee datos_web/en_vivo.json (generado por en_vivo/correr_en_vivo.py) */
+(function () {
+  var fmt = function (n) { return (n < 0 ? "-$" : "$") + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  fetch("datos_web/en_vivo.json").then(function (r) { return r.json(); }).then(function (d) {
+    document.getElementById("ev-equity").textContent = fmt(d.equity);
+    var pnl = document.getElementById("ev-pnl");
+    pnl.textContent = fmt(d.pnl_acumulado_$) + " (" + (d["pnl_acumulado_%"] >= 0 ? "+" : "") + d["pnl_acumulado_%"] + " %)";
+    pnl.style.color = d.pnl_acumulado_$ < 0 ? "#e5534b" : "#3fb950";
+    document.getElementById("ev-cash").textContent = fmt(d.cash);
+    document.getElementById("ev-sesion").textContent = d.ultima_sesion_procesada || "—";
+    document.getElementById("ev-actualizado").textContent = "Actualizado: " + (d.actualizado || "").replace("T", " ") + " · DD máx " + d["drawdown_max_%"] + " % · cerradas: " + d.operaciones_cerradas + (d.parada_total ? " · ⛔ PARADA TOTAL" : "");
+    var pos = document.getElementById("ev-posiciones");
+    if (!d.posiciones_abiertas.length) { pos.innerHTML = '<p class="tenue">Sin posiciones abiertas.</p>'; }
+    else {
+      pos.innerHTML = d.posiciones_abiertas.map(function (p) {
+        return '<div class="tarjeta-panel"><span class="etq">' + p.agente + " · " + p.estrategia + '</span><strong>' + p.simbolo + "</strong> " +
+          p.acciones + " acc @ " + fmt(p.entrada) + " · stop " + fmt(p.stop) + (p.objetivo ? " · objetivo " + fmt(p.objetivo) : "") +
+          (p.pnl_abierto_$ !== null ? ' · P&amp;L abierto <span style="color:' + (p.pnl_abierto_$ < 0 ? "#e5534b" : "#3fb950") + '">' + fmt(p.pnl_abierto_$) + "</span>" : "") +
+          '<span class="etq">desde ' + p.fecha_entrada + "</span></div>";
+      }).join("");
+    }
+    var pen = document.getElementById("ev-pendientes");
+    if (!d.senales_pendientes.length) { pen.innerHTML = '<p class="tenue">Sin señales pendientes: ALGIZ no ha aprobado ninguna entrada para la próxima apertura.</p>'; }
+    else {
+      pen.innerHTML = d.senales_pendientes.map(function (p) {
+        if (p.tipo === "salida") return '<div class="tarjeta-panel"><span class="etq">SALIDA · ' + p.agente + '</span><strong>' + p.simbolo + "</strong> " + p.motivo + '<span class="etq">' + p.ejecucion + "</span></div>";
+        return '<div class="tarjeta-panel"><span class="etq">' + p.agente + " · " + p.estrategia + '</span><strong>' + p.simbolo + "</strong> stop " + fmt(p.stop) + (p.objetivo ? " · objetivo " + fmt(p.objetivo) : " · sin objetivo fijo") + '<span class="etq">señal del ' + p.fecha_senal + " · " + p.ejecucion + "</span></div>";
+      }).join("");
+    }
+  }).catch(function () {
+    document.getElementById("ev-posiciones").innerHTML = '<p class="tenue">Datos en vivo aún no disponibles.</p>';
+  });
+})();
+
+/* Vista SALA EN VIVO — tablero, estudio y feed (sección "intradia" del mismo JSON) */
+(function () {
+  var fmt = function (n) { return (n < 0 ? "-$" : "$") + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  var col = function (n) { return n < 0 ? "#e5534b" : "#3fb950"; };
+  function pintar() {
+    fetch("datos_web/en_vivo.json").then(function (r) { return r.json(); }).then(function (d) {
+      var iv = d.intradia;
+      if (!iv) { document.getElementById("lv-mercado").textContent = "Capa intradía aún sin datos (el vigía no ha corrido)."; return; }
+      document.getElementById("lv-mercado").textContent = (iv.mercado.estado === "abierto" ? "🟢 MERCADO ABIERTO" : "🔴 MERCADO CERRADO") + " · " + iv.mercado.nota + " · " + (iv.mercado.hora_et || "").replace("T", " ") + ".";
+      document.getElementById("lv-equity").textContent = fmt(iv.equity_flotante);
+      var pnl = document.getElementById("lv-pnl");
+      pnl.textContent = fmt(iv.pnl_flotante_total_$); pnl.style.color = col(iv.pnl_flotante_total_$);
+      document.getElementById("lv-npos").textContent = iv.posiciones_en_vivo.length;
+      document.getElementById("lv-precios").innerHTML = iv.precios.map(function (p) {
+        return '<div class="lv-precio"><span class="sim">' + p.simbolo + '</span><span class="pr">' + (p.precio !== null ? fmt(p.precio) : "—") + '</span><span class="cb" style="color:' + col(p["cambio_dia_%"]) + '">' + (p["cambio_dia_%"] !== null ? (p["cambio_dia_%"] >= 0 ? "+" : "") + p["cambio_dia_%"] + " % hoy" : "sin datos") + "</span></div>";
+      }).join("");
+      var pos = document.getElementById("lv-posiciones");
+      pos.innerHTML = iv.posiciones_en_vivo.length ? iv.posiciones_en_vivo.map(function (p) {
+        return '<div class="tarjeta-panel"><span class="etq">' + p.agente + " · " + p.estrategia + '</span><strong>' + p.simbolo + "</strong> " + p.acciones + " acc @ " + fmt(p.entrada) +
+          " → ahora " + fmt(p.precio_actual) + ' · <span style="color:' + col(p.pnl_en_vivo_$) + '">' + fmt(p.pnl_en_vivo_$) + " (" + (p["pnl_en_vivo_%"] >= 0 ? "+" : "") + p["pnl_en_vivo_%"] + " %)</span>" +
+          '<span class="etq">stop ' + fmt(p.stop) + (p.objetivo ? " · objetivo " + fmt(p.objetivo) : "") + " · desde " + p.fecha_entrada + "</span></div>";
+      }).join("") : '<p class="tenue">Sin posiciones demo abiertas: la sala estudia y espera su disparador.</p>';
+      document.getElementById("lv-estudio").innerHTML = iv.estudio_agentes.map(function (e) {
+        return '<div class="tarjeta-panel"><span class="etq">' + e.agente + " · " + e.estrategia + '</span><strong>Vigila: ' + e.vigila + "</strong><br>Espera: " + e.espera +
+          (e["distancia_%"] !== null && e.agente !== "ALGIZ" ? '<br><span style="color:#d4af37">Distancia al disparador: ' + (e["distancia_%"] >= 0 ? "+" : "") + e["distancia_%"] + " %</span>" : "") +
+          '<span class="etq">' + e.detalle + "</span></div>";
+      }).join("");
+      document.getElementById("lv-feed").innerHTML = iv.feed_actividad.map(function (f) {
+        return '<li><span class="fh">' + f.hora + "</span>" + f.texto + "</li>";
+      }).join("");
+    }).catch(function () { /* sin datos todavía */ });
+  }
+  pintar();
+  setInterval(pintar, 60000);
+})();
+</script>
 </body>
 </html>

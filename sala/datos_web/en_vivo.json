@@ -1,0 +1,166 @@
+{
+ "sala": "LA SALA ARONYX — EN VIVO",
+ "distintivo": "PAPEL — SIN DINERO REAL",
+ "actualizado": "2026-10-25T13:17:36",
+ "ultima_sesion_procesada": "2026-10-23",
+ "capital_inicial": 10000.0,
+ "equity": 10000.0,
+ "cash": 10000.0,
+ "pnl_acumulado_$": 0.0,
+ "pnl_acumulado_%": 0.0,
+ "drawdown_actual_%": 0.0,
+ "drawdown_max_%": 0.0,
+ "parada_total": false,
+ "operaciones_cerradas": 0,
+ "senales_rechazadas_algiz": 0,
+ "posiciones_abiertas": [],
+ "senales_pendientes": [],
+ "historial_equity": [
+  {
+   "fecha": "2026-10-23",
+   "equity": 10000.0
+  }
+ ],
+ "contadores": {
+  "sesiones_procesadas": 0,
+  "dias_bloqueo_dia": 0,
+  "semanas_bloqueo": 0,
+  "paradas_totales": 0,
+  "senales_detectadas": 0,
+  "entradas_ejecutadas": 0,
+  "salidas_ejecutadas": 0,
+  "vetos_apertura": 0
+ },
+ "intradia": {
+  "mercado": {
+   "estado": "cerrado",
+   "hora_et": "2026-10-25T13:18:05-04:00",
+   "nota": "mercado cerrado: precios = último cierre disponible"
+  },
+  "precios": [
+   {
+    "simbolo": "SPY",
+    "precio": 759.97,
+    "cambio_dia_%": -0.52,
+    "volumen_hoy": 33133505,
+    "hora_precio": "2026-10-23T16:00:00-04:00"
+   },
+   {
+    "simbolo": "QQQ",
+    "precio": 704.4,
+    "cambio_dia_%": -0.01,
+    "volumen_hoy": 30224671,
+    "hora_precio": "2026-10-23T16:00:00-04:00"
+   },
+   {
+    "simbolo": "AAPL",
+    "precio": 347.725,
+    "cambio_dia_%": -0.14,
+    "volumen_hoy": 39539690,
+    "hora_precio": "2026-10-23T16:00:01-04:00"
+   },
+   {
+    "simbolo": "MSFT",
+    "precio": 524.51,
+    "cambio_dia_%": 0.66,
+    "volumen_hoy": 13681067,
+    "hora_precio": "2026-10-23T16:00:01-04:00"
+   },
+   {
+    "simbolo": "NVDA",
+    "precio": 210.96,
+    "cambio_dia_%": -0.59,
+    "volumen_hoy": 80189765,
+    "hora_precio": "2026-10-23T16:00:00-04:00"
+   },
+   {
+    "simbolo": "AMZN",
+    "precio": 248.0,
+    "cambio_dia_%": -0.95,
+    "volumen_hoy": 25569043,
+    "hora_precio": "2026-10-23T16:00:01-04:00"
+   },
+   {
+    "simbolo": "META",
+    "precio": 642.62,
+    "cambio_dia_%": -0.96,
+    "volumen_hoy": 14791603,
+    "hora_precio": "2026-10-23T16:00:01-04:00"
+   },
+   {
+    "simbolo": "GOOGL",
+    "precio": 320.21,
+    "cambio_dia_%": -1.24,
+    "volumen_hoy": 17569640,
+    "hora_precio": "2026-10-23T16:00:01-04:00"
+   }
+  ],
+  "equity_flotante": 10000.0,
+  "pnl_flotante_total_$": 0.0,
+  "posiciones_en_vivo": [],
+  "estudio_agentes": [
+   {
+    "agente": "ANSUZ",
+    "estrategia": "A — tendencia",
+    "vigila": "AAPL",
+    "espera": "ruptura del máximo de 20 días ($348.36)",
+    "distancia_%": 0.18,
+    "detalle": "AAPL está a +0.18 % del disparador; tendencia sana (MM50>MM200) confirmada al último cierre."
+   },
+   {
+    "agente": "THURISAZ",
+    "estrategia": "A-rebote — MM50",
+    "vigila": "SPY",
+    "espera": "toque de la MM50 ($767.81) con vela de rechazo",
+    "distancia_%": -1.02,
+    "detalle": "SPY cotiza -1.02 % sobre su MM50; el rebote exige toque + rechazo + confirmación al cierre."
+   },
+   {
+    "agente": "SOWILO",
+    "estrategia": "B — ruptura de rango",
+    "vigila": "AAPL",
+    "espera": "cierre sobre la resistencia del rango ($348.36) con RVOL ≥ 1,5",
+    "distancia_%": 0.18,
+    "detalle": "AAPL está a +0.18 % de su resistencia de 20 días; sin volumen 1,5x no hay ruptura válida."
+   },
+   {
+    "agente": "EHWAZ",
+    "estrategia": "C — retroceso",
+    "vigila": "SPY",
+    "espera": "retroceso a la MM50 con RSI entre 40 y 52 y vela de rechazo",
+    "distancia_%": -1.02,
+    "detalle": "SPY: RSI 42.1 al último cierre y precio -1.02 % sobre la MM50."
+   },
+   {
+    "agente": "ALGIZ",
+    "estrategia": "Vigía de riesgo",
+    "vigila": "LA CUENTA",
+    "espera": "que nadie rompa las reglas §4",
+    "distancia_%": 0.0,
+    "detalle": "Drawdown 0.00 % (parada total a -10 %) · riesgo abierto $0.00 (0.00 % del equity, tope 3 %) · pendientes de su veto: 0 · rechazos acumulados: 0"
+   }
+  ],
+  "feed_actividad": [
+   {
+    "hora": "13:18 ET",
+    "texto": "Mercado CERRADO: sondeo en seco con el último cierre; la sala estudia para la próxima sesión."
+   },
+   {
+    "hora": "13:18 ET",
+    "texto": "EHWAZ vigila SPY: a -1.02 % de su disparador."
+   },
+   {
+    "hora": "13:18 ET",
+    "texto": "SOWILO vigila AAPL: a +0.18 % de su disparador."
+   },
+   {
+    "hora": "13:18 ET",
+    "texto": "THURISAZ vigila SPY: a -1.02 % de su disparador."
+   },
+   {
+    "hora": "13:18 ET",
+    "texto": "ANSUZ vigila AAPL: a +0.18 % de su disparador."
+   }
+  ]
+ }
+}
