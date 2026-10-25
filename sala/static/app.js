@@ -145,6 +145,82 @@ function render() {
   $("parada-banner").style.display = (d.fecha_parada && est.hoy >= d.fecha_parada) ? "" : "none";
   renderAgentes(est);
   renderCalendario(est);
+  publicarEstados3D(est);
+  renderPresentacion(est);
+}
+
+/* ---------- puente con la vista 3D (mismos estados que la 2D) ---------- */
+function publicarEstados3D(est) {
+  if (!window.Sala3D || !Sala3D.setEstados) return;
+  const mapa = {};
+  for (const ag of AGENTES) {
+    if (ag.algiz) {
+      mapa[ag.nombre] = { dd: est.dd, paradaTotal: !!(S.data.fecha_parada && est.hoy >= S.data.fecha_parada) };
+      continue;
+    }
+    const cerrHoy = est.cerradas.filter(t => t.agente === ag.nombre && t.fecha_salida === est.hoy);
+    const abr = est.abiertas.filter(t => t.agente === ag.nombre);
+    let estado3d = "inactivo";
+    if (cerrHoy.length) estado3d = cerrHoy[cerrHoy.length - 1]["resultado_$"] > 0 ? "gano" : "perdio";
+    else if (abr.length) estado3d = "abierta";
+    mapa[ag.nombre] = { estado: estado3d };
+  }
+  try { Sala3D.setEstados(mapa); } catch (e) { /* si la 3D falla, la 2D sigue */ }
+}
+
+/* ---------- modo presentación 9:16 ---------- */
+let salaOrigen = null;
+function renderPresentacion(est) {
+  if (!document.body.classList.contains("presentacion")) return;
+  $("pres-fecha").textContent = "📅 " + est.hoy;
+  $("pres-equity").textContent = fmt$(est.equity);
+  const p = $("pres-pnl");
+  p.textContent = fmt$(est.pnl);
+  p.className = est.pnl > 0 ? "pos" : (est.pnl < 0 ? "neg" : "");
+  $("pres-dd").textContent = (est.dd * 100).toFixed(2) + " %";
+  $("pres-agentes").innerHTML = AGENTES.map(ag => {
+    const luzEl = $("luz-" + ag.nombre);
+    const color = luzEl ? luzEl.getAttribute("fill") : "#555";
+    if (ag.algiz) {
+      const parada = S.data.fecha_parada && est.hoy >= S.data.fecha_parada;
+      return `<div class="pres-ag"><span class="luz" style="background:${color}"></span><b>${ag.runa} ${ag.nombre}</b><span>${parada ? "⛔ PARADA TOTAL" : "DD " + (est.dd * 100).toFixed(2) + " %"}</span></div>`;
+    }
+    const st = statsAgente(ag.nombre, est);
+    return `<div class="pres-ag"><span class="luz" style="background:${color}"></span><b>${ag.runa} ${ag.nombre}</b><span class="${st.pnl > 0 ? "pos" : (st.pnl < 0 ? "neg" : "")}">${fmt$(st.pnl)} · ${st.n} ops</span></div>`;
+  }).join("");
+}
+function activarPresentacion() {
+  const wrap = $("sala-wrap");
+  if (!salaOrigen) salaOrigen = { padre: wrap.parentNode, siguiente: wrap.nextSibling };
+  $("pres-sala").appendChild(wrap);
+  $("presentacion").hidden = false;
+  document.body.classList.add("presentacion");
+  window.scrollTo(0, 0);
+  if (window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
+  render();
+}
+function salirPresentacion() {
+  const wrap = $("sala-wrap");
+  if (salaOrigen) {
+    if (salaOrigen.siguiente && salaOrigen.siguiente.parentNode === salaOrigen.padre) salaOrigen.padre.insertBefore(wrap, salaOrigen.siguiente);
+    else salaOrigen.padre.appendChild(wrap);
+  }
+  $("presentacion").hidden = true;
+  document.body.classList.remove("presentacion");
+  if (window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
+  render();
+}
+
+/* ---------- vista 2D / 3D ---------- */
+function fijarVista(v) {
+  S.vista = v;
+  const es3d = v === "3d";
+  $("wrap-3d").hidden = !es3d;
+  $("wrap-2d").hidden = es3d;
+  $("btn-vista-3d").classList.toggle("activo", es3d);
+  $("btn-vista-2d").classList.toggle("activo", !es3d);
+  if (window.Sala3D && Sala3D.setVisible) Sala3D.setVisible(es3d);
+  if (es3d && window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
 }
 function dibujarCurva(est) {
   const cv = $("curva"), ctx = cv.getContext("2d");
@@ -260,6 +336,201 @@ function renderCalendario(est) {
   S.mesCal = clave;
 }
 
+/* ---------- chat con los agentes ----------
+   Motor 100 % local y determinista: interpreta por palabras clave y calcula
+   SOLO desde el JSON de la sesión, hasta el día actual del replay (S.i).
+   Cero IA externa, cero números inventados. */
+const ESTRATEGIAS_CHAT = {
+  ANSUZ: "Opero la estrategia A, tendencia con medias: espero una tendencia sana —la media de 50 por encima de la de 200— y entro cuando el cierre supera el máximo de 20 días. Cada entrada nace con su stop y el riesgo por operación lo limita ALGIZ al 1 % de la cuenta.",
+  THURISAZ: "Opero la estrategia A-rebote: en una tendencia sana espero el retroceso hasta la media de 50 y entro solo si hay rechazo en la MM50 confirmado al cierre siguiente. Sin confirmación, no hay operación.",
+  SOWILO: "Opero la estrategia B, ruptura con volumen: entro cuando el cierre supera la resistencia del rango de 20 días con volumen relativo (RVOL) de al menos 1,5. Si el precio vuelve a cerrar dentro del rango, la ruptura era falsa y salgo.",
+  EHWAZ: "Opero la estrategia C, retroceso a soporte: busco un retroceso sano hasta la MM50 con el RSI entre 40 y 50, y entro con rechazo y confirmación para retomar la tendencia.",
+  ALGIZ: "Yo no opero: vigilo el riesgo de toda la sala. Aplico el riesgo del 1 % por operación, el tope del 25 % por posición, el riesgo abierto ≤3 % y los frenos: −2 % en un día, −4 % en la semana y parada total al −10 % de drawdown. También rechazo las señales de ruptura y retroceso que no ofrezcan al menos un 1:2 de beneficio/riesgo.",
+  SALA: "Cada agente tiene la suya: ANSUZ la A de tendencia con medias, THURISAZ el rebote en la MM50, SOWILO la B de ruptura con volumen y EHWAZ la C de retroceso a soporte. ALGIZ no opera: pone los límites de riesgo. Pregúntale a cada uno por la suya."
+};
+const CHIPS_CHAT = {
+  SALA: ["Resumen", "¿Quién va mejor?", "¿Quién va peor?", "¿Qué hay abierto?", "¿Hubo parada total?"],
+  ALGIZ: ["¿A cuántos rechazaste?", "¿Hubo parada total?", "¿Cuáles son tus reglas?", "¿Cómo va la sala?"],
+  defecto: ["¿Cómo vas?", "Tu mejor operación", "Tu peor operación", "¿Qué tienes abierto?", "¿Por qué entraste en tu última operación?", "¿Cuál es tu estrategia?"]
+};
+const INTERLOCUTORES = [["SALA", "La Sala"], ["ANSUZ", "ANSUZ"], ["THURISAZ", "THURISAZ"], ["SOWILO", "SOWILO"], ["EHWAZ", "EHWAZ"], ["ALGIZ", "ALGIZ"]];
+S.chatInt = "SALA";
+
+const normChat = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+function ddMinHastaHoy() {
+  const d = S.data; let peak = -Infinity, min = 0;
+  for (let k = 0; k <= S.i; k++) {
+    peak = Math.max(peak, d.curva[k][1]);
+    if (peak > 0) min = Math.min(min, (d.curva[k][1] - peak) / peak);
+  }
+  return min;
+}
+function descOpChat(t, est, primera) {
+  const cerrada = t.fecha_salida <= est.hoy;
+  const v = primera ? ["Entré en", "con", "Salió"] : ["entró en", "con", "salió"];
+  let s = `${v[0]} ${t.simbolo} el ${t.fecha_entrada} a ${fmt$(t.entrada)} ${v[1]} ${t.acciones} acciones (stop ${fmt$(t.stop)}, objetivo ${fmt$(t.objetivo)})`;
+  if (cerrada) s += `. ${v[2]} el ${t.fecha_salida} a ${fmt$(t.salida)} por ${t.salida_por}: ${fmt$(t["resultado_$"])} (${t.resultado_R >= 0 ? "+" : ""}${t.resultado_R} R)`;
+  else s += `. A día de hoy (${est.hoy}) sigue abierta`;
+  return s;
+}
+function alcanceChat(est) {
+  // operaciones dentro del alcance del interlocutor, hasta hoy
+  if (S.chatInt === "SALA" || S.chatInt === "ALGIZ")
+    return { cerr: est.cerradas, abr: est.abiertas };
+  return {
+    cerr: est.cerradas.filter(t => t.agente === S.chatInt),
+    abr: est.abiertas.filter(t => t.agente === S.chatInt)
+  };
+}
+function responderChat(textoCrudo) {
+  const est = estado();
+  const q = normChat(textoCrudo);
+  const int_ = S.chatInt, esSala = int_ === "SALA", esAlgiz = int_ === "ALGIZ";
+  const yo = !esSala && !esAlgiz; // operador en primera persona
+  const { cerr, abr } = alcanceChat(est);
+  const simb = Object.keys(S.data.velas).find(s => new RegExp("\\b" + s + "\\b").test(textoCrudo.toUpperCase()));
+
+  // — ¿por qué entró en…? (campo "motivo" del diario)
+  if (q.includes("por que") || q.includes("porque") || q.includes("entro en") || q.includes("entr") && q.includes("ultima") || q.includes("motivo") || q.includes("compraste")) {
+    let candidatas = (simb ? est.diario.filter(t => t.simbolo === simb) : est.diario)
+      .filter(t => (esSala || esAlgiz || t.agente === int_) && t.fecha_entrada <= est.hoy)
+      .sort((a, b) => a.fecha_entrada < b.fecha_entrada ? -1 : 1);
+    if (!candidatas.length)
+      return simb
+        ? `Hasta el ${est.hoy} no hay ninguna operación en ${simb} ${yo ? "mía" : "en el diario"} en esta sesión.`
+        : `Hasta el ${est.hoy} todavía no hay entradas registradas ${yo ? "mías" : ""} en esta sesión.`;
+    const t = candidatas[candidatas.length - 1];
+    const prefijo = esSala || esAlgiz ? `${t.agente} ` : "";
+    return `${prefijo}${descOpChat(t, est, yo)}. El motivo que dejó el motor en el diario: «${t.motivo}».`;
+  }
+  // — rechazos de ALGIZ (el JSON solo trae el total de la sesión, sin fechar)
+  if (q.includes("rechaz")) {
+    const n = S.data.senales_rechazadas;
+    if (!n) return `En esta sesión no rechacé ninguna señal: el registro del motor marca 0 rechazos (${S.data.desde} → ${S.data.hasta}).`;
+    return `El registro del motor marca ${n} señales rechazadas en la sesión completa (${S.data.desde} → ${S.data.hasta}): son entradas de ruptura o retroceso que no ofrecían al menos 1:2 o que rompían los límites de riesgo. El diario no fecha cada rechazo, así que no te invento un corte a ${est.hoy}: el total registrado es ${n}.`;
+  }
+  // — parada total (sin filtrar el futuro: solo si ya ocurrió al día actual)
+  if (q.includes("parada")) {
+    const ddMin = ddMinHastaHoy();
+    if (S.data.fecha_parada && est.hoy >= S.data.fecha_parada)
+      return `Sí. La parada total saltó el ${S.data.fecha_parada}: el drawdown cruzó el −10 % (el máximo registrado de la sesión es ${(S.data.dd_max * 100).toFixed(2)} %) y cerré la puerta a nuevas entradas.`;
+    return `No, hasta hoy (${est.hoy}) no ha saltado la parada total. El peor drawdown hasta ahora es ${(ddMin * 100).toFixed(2)} %; la parada se activa al −10 %.`;
+  }
+  // — ranking entre agentes
+  if (q.includes("quien") && (q.includes("mejor") || q.includes("peor"))) {
+    const filas = AGENTES.filter(a => !a.algiz).map(a => {
+      const st = statsAgente(a.nombre, est);
+      return { nombre: a.nombre, pnl: st.pnl, n: st.n };
+    }).sort((a, b) => b.pnl - a.pnl);
+    if (!filas.some(f => f.n))
+      return `Hasta el ${est.hoy} ningún agente ha cerrado operaciones todavía en esta sesión.`;
+    const f = q.includes("mejor") ? filas[0] : filas[filas.length - 1];
+    return `Hasta el ${est.hoy}, ${q.includes("mejor") ? "el mejor" : "el peor"} es ${f.nombre}: P&L de ${fmt$(f.pnl)} con ${f.n} operaciones cerradas. El ranking completo: ${filas.map(x => `${x.nombre} ${fmt$(x.pnl)}`).join(" · ")}.`;
+  }
+  // — mejor / peor operación
+  if (q.includes("mejor") || q.includes("peor")) {
+    if (!cerr.length) return `Todavía no ${yo ? "he" : "hay"} operaciones cerradas hasta el ${est.hoy} en esta sesión.`;
+    const ord = [...cerr].sort((a, b) => a["resultado_$"] - b["resultado_$"]);
+    const t = q.includes("mejor") ? ord[ord.length - 1] : ord[0];
+    const prefijo = esSala || esAlgiz ? `${t.agente} · ` : `${yo ? "Mi" : "La"} ${q.includes("mejor") ? "mejor" : "peor"} operación hasta el ${est.hoy}: `;
+    return `${prefijo}${esSala || esAlgiz ? descOpChat(t, est, false) : descOpChat(t, est, yo)}${esSala || esAlgiz ? "" : ""}.`;
+  }
+  // — qué hay abierto
+  if (q.includes("abiert")) {
+    if (!abr.length) return `A ${est.hoy} no ${yo ? "tengo" : "hay"} ninguna posición abierta${yo ? "" : " en la sala"}.`;
+    const lista = abr.map(t => `${esSala || esAlgiz ? t.agente + " · " : ""}${descOpChat(t, est, yo)}`).join("\n");
+    return `${yo ? "Tengo" : "Hay"} ${abr.length} abierta${abr.length > 1 ? "s" : ""} a ${est.hoy}:\n${lista}`;
+  }
+  // — estrategia / reglas
+  if (q.includes("estrategia") || q.includes("reglas") || q.includes("como operas") || q.includes("que haces")) {
+    return ESTRATEGIAS_CHAT[int_];
+  }
+  // — resumen de la sala
+  if (q.includes("resumen") || q.includes("como va la sala")) {
+    const porAg = AGENTES.filter(a => !a.algiz).map(a => {
+      const st = statsAgente(a.nombre, est);
+      return `${a.nombre}: ${fmt$(st.pnl)} (${st.n} cerr.)`;
+    }).join(" · ");
+    return `Sesión ${S.data.id} (${S.data.nombre}) a ${est.hoy}, día ${S.i + 1} de ${S.data.curva.length}. Equity ${fmt$(est.equity)} desde ${fmt$(S.data.capital)} inicial. P&L realizado ${fmt$(est.pnl)} con ${est.cerradas.length} operaciones cerradas y ${est.abiertas.length} abiertas. Drawdown actual ${(est.dd * 100).toFixed(2)} %. Por agentes: ${porAg}. Y recuerda: la métrica reina es el cumplimiento del plan, no el P&L.`;
+  }
+  // — estado / cómo vas
+  if (q.includes("como vas") || q.includes("como va") || q.includes("estado") || q.includes("cuantas") || q.includes("operaciones") || q.includes("numeros")) {
+    if (esAlgiz)
+      return `Estoy vigilando. Drawdown actual de la sala: ${(est.dd * 100).toFixed(2)} % (peor hasta hoy: ${(ddMinHastaHoy() * 100).toFixed(2)} %). Equity ${fmt$(est.equity)}, P&L realizado ${fmt$(est.pnl)}, ${est.cerradas.length} operaciones cerradas y ${est.abiertas.length} abiertas a ${est.hoy}. ${S.data.fecha_parada && est.hoy >= S.data.fecha_parada ? "La parada total ya saltó el " + S.data.fecha_parada + "." : "Sin parada total hasta hoy."}`;
+    if (esSala)
+      return `La sala va así a ${est.hoy}: equity ${fmt$(est.equity)}, P&L realizado ${fmt$(est.pnl)}, ${est.cerradas.length} cerradas y ${est.abiertas.length} abiertas, drawdown ${(est.dd * 100).toFixed(2)} %. Pídeme el «Resumen» para verlo agente por agente.`;
+    const st = statsAgente(int_, est);
+    if (!st.n && !st.abiertas)
+      return `Hasta el ${est.hoy} todavía no he operado en esta sesión: cero operaciones cerradas y nada abierto. Mi estrategia espera su señal; si quieres, te cuento cuál es.`;
+    return `Hasta el ${est.hoy} llevo ${st.n} operaciones cerradas, con un ${st.aciertos.toFixed(0)} % de aciertos y un P&L de ${fmt$(st.pnl)} (R promedio ${st.rprom >= 0 ? "+" : ""}${st.rprom.toFixed(2)} R). Tengo ${st.abiertas} abierta${st.abiertas === 1 ? "" : "s"} ahora mismo.`;
+  }
+  // — no entendido
+  return `Esa no la tengo en mi diario. Puedo responderte con los números de la sesión hasta el ${est.hoy}: cómo ${yo ? "voy" : "va la sala"}, ${yo ? "mi" : "la"} mejor y ${yo ? "mi" : "la"} peor operación, qué hay abierto, por qué ${yo ? "entré" : "se entró"} en una operación (dime el símbolo) o cuál es ${yo ? "mi" : "cada"} estrategia. Prueba con los botones de arriba.`;
+}
+function chatMensaje(quien, texto, clase) {
+  const v = $("chat-ventana");
+  const div = document.createElement("div");
+  div.className = "msg " + clase;
+  const cab = document.createElement("span");
+  cab.className = "quien"; cab.textContent = quien;
+  div.appendChild(cab);
+  div.appendChild(document.createTextNode(texto));
+  v.appendChild(div);
+  v.scrollTop = v.scrollHeight;
+}
+function chatSaludo() {
+  if (!S.data) return;
+  const hoy = S.data.curva[S.i][0], id = S.data.id;
+  const saludos = {
+    SALA: `Soy la Sala. Te cuento lo que pasa aquí dentro con los números del diario de la sesión ${id}, hasta el día que marque el replay (${hoy}).`,
+    ALGIZ: `Soy ALGIZ ᛉ, el vigía de riesgo. No opero: controlo el 1 % por operación, los frenos y la parada total. Pregúntame por los rechazos y el drawdown de la sesión ${id}.`,
+  };
+  const ag = AGENTES.find(a => a.nombre === S.chatInt);
+  chatMensaje(S.chatInt === "SALA" ? "La Sala" : S.chatInt,
+    saludos[S.chatInt] || `Soy ${ag.nombre} ${ag.runa}, ${ag.estrategia}. Pregúntame por mis números: salen del diario de la sesión ${id}, hasta el día actual del replay (${hoy}). Nada inventado.`,
+    "agente");
+}
+function pintarChipsChat() {
+  const lista = CHIPS_CHAT[S.chatInt] || CHIPS_CHAT.defecto;
+  $("chat-chips").innerHTML = "";
+  for (const txt of lista) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = txt;
+    b.addEventListener("click", () => enviarPreguntaChat(txt));
+    $("chat-chips").appendChild(b);
+  }
+}
+function fijarInterlocutor(nombreInt) {
+  S.chatInt = nombreInt;
+  document.querySelectorAll("#chat-tabs .chat-tab").forEach(b => b.classList.toggle("activo", b.dataset.int === nombreInt));
+  $("chat-ventana").innerHTML = "";
+  pintarChipsChat();
+  chatSaludo();
+}
+function enviarPreguntaChat(txt) {
+  const limpio = (txt || "").trim();
+  if (!limpio || !S.data) return;
+  chatMensaje("Tú", limpio, "tu");
+  chatMensaje(S.chatInt === "SALA" ? "La Sala" : S.chatInt, responderChat(limpio), "agente");
+  $("chat-input").value = "";
+}
+function iniciarChat() {
+  const tabs = $("chat-tabs");
+  tabs.innerHTML = "";
+  for (const [valor, etiqueta] of INTERLOCUTORES) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chat-tab" + (valor === S.chatInt ? " activo" : "");
+    b.dataset.int = valor; b.textContent = etiqueta;
+    b.addEventListener("click", () => fijarInterlocutor(valor));
+    tabs.appendChild(b);
+  }
+  $("chat-form").addEventListener("submit", e => {
+    e.preventDefault();
+    enviarPreguntaChat($("chat-input").value);
+  });
+  pintarChipsChat();
+}
+
 /* ---------- controles del replay ---------- */
 function parar() {
   if (S.timer) { clearInterval(S.timer); S.timer = null; $("btn-play").textContent = "▶ Play"; }
@@ -278,6 +549,7 @@ async function cargarSesion(id) {
   S.data = await r.json();
   S.i = 0; S.fichaAbierta = null;
   render();
+  fijarInterlocutor(S.chatInt); // el chat saluda con la sesión nueva
 }
 async function iniciar() {
   construirSala();
@@ -292,7 +564,24 @@ async function iniciar() {
     S.velocidad = Number(e.target.value);
     if (S.timer) reproducir();
   });
-  window.addEventListener("resize", () => render());
+  // vista 3D (principal) / 2D (ligera): si WebGL no está, se queda la 2D sin error
+  let ok3d = false;
+  if (window.Sala3D && Sala3D.iniciar) {
+    try { ok3d = !!Sala3D.iniciar($("sala3d")); } catch (e) { ok3d = false; }
+  }
+  if (!ok3d) { $("btn-vista-3d").disabled = true; $("btn-vista-3d").title = "WebGL no disponible en este navegador"; }
+  $("btn-vista-3d").addEventListener("click", () => fijarVista("3d"));
+  $("btn-vista-2d").addEventListener("click", () => fijarVista("2d"));
+  fijarVista(ok3d ? "3d" : "2d");
+  // modo presentación 9:16
+  $("btn-presentacion").addEventListener("click", activarPresentacion);
+  $("btn-salir-pres").addEventListener("click", salirPresentacion);
+  // chat con los agentes
+  iniciarChat();
+  window.addEventListener("resize", () => {
+    render();
+    if (window.Sala3D && Sala3D.redimensionar) Sala3D.redimensionar();
+  });
   if (sesiones.length) { sel.value = sesiones[0].id; await cargarSesion(sesiones[0].id); }
 }
 document.addEventListener("DOMContentLoaded", iniciar);

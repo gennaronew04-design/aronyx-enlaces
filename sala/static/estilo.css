@@ -108,3 +108,55 @@ h2{font-size:17px;letter-spacing:1px;color:var(--dorado-claro);margin:4px 0 10px
 .cal-dia.fuera{opacity:.28;cursor:default}
 .cal-detalle{min-height:18px;color:var(--dorado-claro);font-size:14px}
 footer{padding:14px;color:var(--tenue);font-size:12.5px;text-align:center;border-top:1px solid var(--borde)}
+/* Vista 2D / 3D */
+.sala-vistas{display:flex;align-items:center;gap:8px;margin:2px 2px 8px}
+.sala-vistas-etq{font-size:12px;color:var(--tenue);letter-spacing:1px;text-transform:uppercase}
+.vista-btn{min-height:38px;padding:6px 16px;font-size:14px}
+.vista-btn.activo{background:#3a2f10;color:var(--dorado-claro);border-color:var(--dorado)}
+.vista-btn:disabled{opacity:.4;cursor:not-allowed}
+#sala3d{width:100%;aspect-ratio:10/7;display:block;background:#05070a;border:1px solid #1c1a12;border-radius:10px;touch-action:none;cursor:grab}
+#sala3d:active{cursor:grabbing}
+/* Chat con los agentes */
+.chat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chat-tab{min-height:38px;padding:6px 12px;font-size:13.5px}
+.chat-tab.activo{background:#3a2f10;color:var(--dorado-claro);border-color:var(--dorado)}
+.chat-ventana{
+  display:flex;flex-direction:column;gap:8px;max-height:330px;overflow-y:auto;
+  background:var(--panel);border:1px solid var(--borde);border-radius:12px;padding:10px;
+}
+.chat-ventana:empty{display:none}
+.msg{max-width:88%;padding:8px 11px;border-radius:12px;font-size:14px;line-height:1.45;white-space:pre-line}
+.msg .quien{display:block;font-size:11px;color:var(--tenue);letter-spacing:.5px;margin-bottom:2px;text-transform:uppercase}
+.msg.tu{align-self:flex-end;background:#12211f;border:1px solid #1f7a6e}
+.msg.agente{align-self:flex-start;background:var(--panel2);border:1px solid var(--borde)}
+.chat-chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{min-height:36px;padding:5px 11px;font-size:13px;border-radius:999px}
+.chat-form{display:flex;gap:8px}
+.chat-form input{
+  flex:1;background:var(--panel2);color:var(--texto);border:1px solid var(--borde);
+  border-radius:8px;padding:9px 12px;font-size:15px;min-height:44px;min-width:0;
+}
+/* Modo presentación 9:16 */
+#presentacion{position:fixed;inset:0;background:#000;z-index:60;display:flex;align-items:center;justify-content:center}
+#presentacion[hidden]{display:none}
+body.presentacion{overflow:hidden}
+.pres-escenario{
+  aspect-ratio:9/16;width:min(100vw,56.25vh);height:min(100vh,177.78vw);
+  background:var(--fondo);display:flex;flex-direction:column;gap:10px;
+  padding:14px 12px;overflow:hidden;
+}
+.pres-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.pres-cab h2{margin:0;font-size:20px;letter-spacing:2px;color:var(--texto)}
+.pres-sala .sala-wrap{padding:6px}
+.pres-sala .sala-vistas,.pres-sala .nota-sala{display:none}
+.pres-fecha{font-size:34px;font-weight:800;color:var(--teal);text-align:center;letter-spacing:1px}
+.pres-numeros{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.pres-numeros>div{background:var(--panel2);border:1px solid var(--borde);border-radius:10px;padding:8px 6px;text-align:center}
+.pres-numeros span{display:block;font-size:10px;color:var(--tenue);letter-spacing:1px}
+.pres-numeros strong{font-size:17px}
+.pres-agentes{display:flex;flex-direction:column;gap:6px}
+.pres-ag{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--borde);border-radius:9px;padding:7px 10px;font-size:14px}
+.pres-ag .luz{margin-left:0}
+.pres-ag span:last-child{margin-left:auto}
+.pres-nota{text-align:center;color:var(--tenue);font-size:12px;margin:0}
+#btn-salir-pres{margin-top:auto}
