@@ -34,65 +34,65 @@
  "intradia": {
   "mercado": {
    "estado": "abierto",
-   "hora_et": "2026-10-26T09:54:36-04:00",
+   "hora_et": "2026-10-26T10:47:55-04:00",
    "nota": "precios reales, refresco ~1 min (no tick a tick)"
   },
   "precios": [
    {
     "simbolo": "SPY",
-    "precio": 763.7,
-    "cambio_dia_%": 0.49,
-    "volumen_hoy": 3375161,
-    "hora_precio": "2026-10-26T09:54:37-04:00"
+    "precio": 766.42,
+    "cambio_dia_%": 0.85,
+    "volumen_hoy": 7378224,
+    "hora_precio": "2026-10-26T10:47:56-04:00"
    },
    {
     "simbolo": "QQQ",
-    "precio": 708.095,
-    "cambio_dia_%": 0.52,
-    "volumen_hoy": 5345531,
-    "hora_precio": "2026-10-26T09:54:38-04:00"
+    "precio": 712.92,
+    "cambio_dia_%": 1.21,
+    "volumen_hoy": 10057115,
+    "hora_precio": "2026-10-26T10:47:58-04:00"
    },
    {
     "simbolo": "AAPL",
-    "precio": 343.595,
-    "cambio_dia_%": -1.19,
-    "volumen_hoy": 5165077,
-    "hora_precio": "2026-10-26T09:54:39-04:00"
+    "precio": 346.29,
+    "cambio_dia_%": -0.41,
+    "volumen_hoy": 8654519,
+    "hora_precio": "2026-10-26T10:47:59-04:00"
    },
    {
     "simbolo": "MSFT",
-    "precio": 524.17,
-    "cambio_dia_%": -0.06,
-    "volumen_hoy": 1653684,
-    "hora_precio": "2026-10-26T09:54:39-04:00"
+    "precio": 529.73,
+    "cambio_dia_%": 1.0,
+    "volumen_hoy": 3461422,
+    "hora_precio": "2026-10-26T10:48:02-04:00"
    },
    {
     "simbolo": "NVDA",
-    "precio": 215.27,
-    "cambio_dia_%": 2.04,
-    "volumen_hoy": 12994433,
-    "hora_precio": "2026-10-26T09:54:40-04:00"
+    "precio": 216.48,
+    "cambio_dia_%": 2.62,
+    "volumen_hoy": 25005976,
+    "hora_precio": "2026-10-26T10:48:03-04:00"
    },
    {
     "simbolo": "AMZN",
-    "precio": 249.334,
-    "cambio_dia_%": 0.54,
-    "volumen_hoy": 4529503,
-    "hora_precio": "2026-10-26T09:54:41-04:00"
+    "precio": 250.32,
+    "cambio_dia_%": 0.94,
+    "volumen_hoy": 9217949,
+    "hora_precio": "2026-10-26T10:48:01-04:00"
    },
    {
     "simbolo": "META",
-    "precio": 630.93,
-    "cambio_dia_%": -1.82,
-    "volumen_hoy": 4986017,
-    "hora_precio": "2026-10-26T09:54:41-04:00"
+    "precio": 646.36,
+    "cambio_dia_%": 0.58,
+    "volumen_hoy": 8261290,
+    "hora_precio": "2026-10-26T10:48:07-04:00"
    },
    {
     "simbolo": "GOOGL",
-    "precio": 318.67,
-    "cambio_dia_%": -0.48,
-    "volumen_hoy": 2908928,
-    "hora_precio": "2026-10-26T09:54:36-04:00"
+    "precio": 321.01,
+    "cambio_dia_%": 0.25,
+    "volumen_hoy": 5963776,
+    "hora_precio": "2026-10-26T10:48:09-04:00"
    }
   ],
   "equity_flotante": 10000.0,
@@ -104,32 +104,32 @@
     "estrategia": "A — tendencia",
     "vigila": "AAPL",
     "espera": "ruptura del máximo de 20 días ($348.36)",
-    "distancia_%": 1.39,
-    "detalle": "AAPL está a +1.39 % del disparador; tendencia sana (MM50>MM200) confirmada al último cierre."
+    "distancia_%": 0.6,
+    "detalle": "AAPL está a +0.60 % del disparador; tendencia sana (MM50>MM200) confirmada al último cierre."
    },
    {
     "agente": "THURISAZ",
     "estrategia": "A-rebote — MM50",
     "vigila": "SPY",
     "espera": "toque de la MM50 ($767.81) con vela de rechazo",
-    "distancia_%": -0.54,
-    "detalle": "SPY cotiza -0.54 % sobre su MM50; el rebote exige toque + rechazo + confirmación al cierre."
+    "distancia_%": -0.18,
+    "detalle": "SPY cotiza -0.18 % sobre su MM50; el rebote exige toque + rechazo + confirmación al cierre."
    },
    {
     "agente": "SOWILO",
     "estrategia": "B — ruptura de rango",
     "vigila": "AAPL",
     "espera": "cierre sobre la resistencia del rango ($348.36) con RVOL ≥ 1,5",
-    "distancia_%": 1.39,
-    "detalle": "AAPL está a +1.39 % de su resistencia de 20 días; sin volumen 1,5x no hay ruptura válida."
+    "distancia_%": 0.6,
+    "detalle": "AAPL está a +0.60 % de su resistencia de 20 días; sin volumen 1,5x no hay ruptura válida."
    },
    {
     "agente": "EHWAZ",
     "estrategia": "C — retroceso",
     "vigila": "SPY",
     "espera": "retroceso a la MM50 con RSI entre 40 y 52 y vela de rechazo",
-    "distancia_%": -0.54,
-    "detalle": "SPY: RSI 42.1 al último cierre y precio -0.54 % sobre la MM50."
+    "distancia_%": -0.18,
+    "detalle": "SPY: RSI 42.1 al último cierre y precio -0.18 % sobre la MM50."
    },
    {
     "agente": "ALGIZ",
@@ -142,24 +142,24 @@
   ],
   "feed_actividad": [
    {
-    "hora": "09:54 ET",
+    "hora": "10:47 ET",
     "texto": "Mercado ABIERTO: la sala marca a mercado y estudia (las entradas las decide la corrida de cierre)."
    },
    {
-    "hora": "09:54 ET",
-    "texto": "EHWAZ vigila SPY: a -0.54 % de su disparador."
+    "hora": "10:47 ET",
+    "texto": "EHWAZ vigila SPY: a -0.18 % de su disparador."
    },
    {
-    "hora": "09:54 ET",
-    "texto": "SOWILO vigila AAPL: a +1.39 % de su disparador."
+    "hora": "10:47 ET",
+    "texto": "SOWILO vigila AAPL: a +0.60 % de su disparador."
    },
    {
-    "hora": "09:54 ET",
-    "texto": "THURISAZ vigila SPY: a -0.54 % de su disparador."
+    "hora": "10:47 ET",
+    "texto": "THURISAZ vigila SPY: a -0.18 % de su disparador."
    },
    {
-    "hora": "09:54 ET",
-    "texto": "ANSUZ vigila AAPL: a +1.39 % de su disparador."
+    "hora": "10:47 ET",
+    "texto": "ANSUZ vigila AAPL: a +0.60 % de su disparador."
    }
   ]
  }
