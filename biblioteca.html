@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIBLIOTECA DE ARONYX 📚 — Libros sagrados para leer gratis</title>
+<meta name="description" content="BIBLIOTECA DE ARONYX — Biblia, Ifá-Òrúnmìlà y Corán: los libros sagrados para leer gratis. De Cuba para el mundo.">
+<link rel="icon" type="image/webp" href="sigilo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Jost:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#c9a227; --gold-hi:#eccd6a; --gold-dim:#8a6d1d;
+    --bg:#070708; --panel:#101013; --panel2:#16161b;
+    --text:#f2ead2; --muted:#b9b09a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg);overflow-x:clip}
+  body{
+    font-family:'Jost',system-ui,sans-serif; color:var(--text);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:34px 18px 44px;
+    background:
+      radial-gradient(ellipse 55% 32% at 8% 4%, rgba(186,22,12,.20), transparent 62%),
+      radial-gradient(ellipse 55% 32% at 92% 4%, rgba(186,22,12,.20), transparent 62%),
+      radial-gradient(ellipse 90% 45% at 50% -5%, rgba(201,162,39,.16), transparent 60%),
+      radial-gradient(ellipse 60% 30% at 50% 110%, rgba(150,12,6,.14), transparent 60%),
+      var(--bg);
+  }
+  .wrap{width:100%;max-width:430px;display:flex;flex-direction:column;align-items:center}
+
+  /* Sigilo oficial ARONYX (la imagen real, recortada en hexágono) */
+  .sigil{
+    width:min(52vw,196px);aspect-ratio:1/1;margin-top:2px;
+    filter:drop-shadow(0 14px 26px rgba(0,0,0,.8)) drop-shadow(0 0 26px rgba(255,84,20,.28));
+  }
+  .sigil img{
+    width:100%;height:100%;object-fit:cover;display:block;
+    clip-path:polygon(50% 4.5%,90.5% 26.5%,90.5% 73.5%,50% 95.5%,9.5% 73.5%,9.5% 26.5%);
+  }
+
+  h1{
+    font-family:'Cinzel',serif;font-weight:900;letter-spacing:.18em;
+    font-size:1.62rem;margin-top:18px;text-align:center;line-height:1.3;
+    background:linear-gradient(180deg,#f6e27a 0%,var(--gold) 55%,#7c5f14 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .runes{color:var(--gold-dim);letter-spacing:.55em;font-size:.8rem;margin-top:8px;text-indent:.55em}
+  .lema{
+    margin-top:12px;font-size:.95rem;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--text);text-align:center;text-indent:.32em;
+  }
+  .sub{margin-top:10px;color:var(--muted);font-size:.98rem;text-align:center;line-height:1.5;max-width:350px}
+
+  .section{
+    margin:26px 0 2px;font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;
+    letter-spacing:.34em;color:var(--gold);text-transform:uppercase;text-align:center;text-indent:.34em;
+  }
+  .alas{width:100%;margin-top:14px;display:flex;flex-direction:column;gap:12px}
+  .ala{
+    display:flex;align-items:center;gap:14px;width:100%;
+    min-height:74px;padding:14px 18px;border-radius:14px;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid rgba(201,162,39,.45);
+    box-shadow:0 4px 18px rgba(0,0,0,.55), inset 0 1px 0 rgba(236,205,106,.12);
+  }
+  .ala .ico{font-size:1.55rem;line-height:1;width:36px;text-align:center;flex:0 0 36px}
+  .ala .t{display:flex;flex-direction:column}
+  .ala .name{font-family:'Cinzel',serif;font-weight:700;font-size:1.08rem;letter-spacing:.05em}
+  .ala .desc{color:var(--muted);font-size:.85rem;line-height:1.4;margin-top:2px}
+  .ala .tag{
+    margin-left:auto;flex:0 0 auto;font-size:.68rem;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--gold-hi);
+    border:1px solid rgba(201,162,39,.55);border-radius:999px;padding:4px 9px;
+    background:rgba(201,162,39,.08);text-align:center;
+  }
+
+  .nota{
+    margin-top:26px;width:100%;text-align:center;line-height:1.55;
+    color:var(--text);font-size:.98rem;
+    border:1px solid rgba(201,162,39,.35);border-radius:14px;
+    background:rgba(201,162,39,.05);padding:16px 18px;
+  }
+  .nota .libre{color:var(--gold-hi);font-weight:600;letter-spacing:.06em}
+
+  a.btn{
+    display:flex;align-items:center;gap:14px;width:100%;
+    min-height:62px;padding:12px 18px;border-radius:14px;margin-top:26px;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid rgba(201,162,39,.45);
+    color:var(--text);text-decoration:none;
+    box-shadow:0 4px 18px rgba(0,0,0,.55), inset 0 1px 0 rgba(236,205,106,.12);
+    transition:transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+  }
+  a.btn:active{transform:scale(.985);border-color:var(--gold-hi)}
+  .btn .ico{font-size:1.45rem;line-height:1;width:34px;text-align:center;flex:0 0 34px}
+  .btn .t{display:flex;flex-direction:column}
+  .btn .name{font-weight:600;font-size:1.05rem;letter-spacing:.04em}
+  .btn .desc{color:var(--muted);font-size:.83rem}
+  .btn .arr{margin-left:auto;color:var(--gold);font-size:1.15rem}
+
+  footer{margin-top:34px;text-align:center}
+  footer .fr{color:var(--gold-dim);letter-spacing:.5em;font-size:.72rem;text-indent:.5em}
+  footer p{color:#7d7663;font-size:.8rem;margin-top:8px;letter-spacing:.14em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Sigilo oficial ARONYX: la imagen real de su perfil, recortada en hexágono -->
+  <div class="sigil"><img src="sigilo.webp" alt="Sigilo oficial ARONYX: hexágono de obsidiana con la A de lava, rodeado de runas"></div>
+
+  <h1>BIBLIOTECA<br>DE ARONYX</h1>
+  <div class="runes">ᚨ ᚱ ᚩ ᚾ ᚤ ᛪ</div>
+  <div class="lema">De Cuba para el mundo</div>
+  <p class="sub">Una biblioteca de libros sagrados, abierta para todos: entra, elige un ala y lee <strong>gratis</strong>.</p>
+
+  <div class="section">— Las tres alas —</div>
+
+  <div class="alas">
+    <div class="ala">
+      <span class="ico">✝️</span>
+      <span class="t"><span class="name">Biblia</span><span class="desc">El libro de los libros: historia, poesía, profecía y la palabra que ha cruzado los siglos.</span></span>
+      <span class="tag">En preparación</span>
+    </div>
+    <div class="ala">
+      <span class="ico">🪘</span>
+      <span class="t"><span class="name">Ifá-Òrúnmìlà</span><span class="desc">La sabiduría de Ifá: sus libros, sus signos y los caminos de Òrúnmìlà.</span></span>
+      <span class="tag">En preparación</span>
+    </div>
+    <div class="ala">
+      <span class="ico">☪️</span>
+      <span class="t"><span class="name">Corán</span><span class="desc">El libro sagrado del Islam, en su texto íntegro, para leerlo con calma y respeto.</span></span>
+      <span class="tag">En preparación</span>
+    </div>
+  </div>
+
+  <div class="nota">
+    Estamos preparando los libros con fuentes serias y datos reales.
+    Muy pronto podrás leerlos aquí, <span class="libre">gratis</span>.
+  </div>
+
+  <a class="btn" href="index.html">
+    <span class="ico">🜏</span>
+    <span class="t"><span class="name">Volver a mis enlaces</span><span class="desc">Todos los canales oficiales de ARONYX, en un solo lugar</span></span>
+    <span class="arr">›</span>
+  </a>
+
+  <footer>
+    <div class="fr">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ</div>
+    <p>ARONYX 🜏 · FLORIDA · DE CUBA PARA EL MUNDO</p>
+  </footer>
+</div>
+</body>
+</html>
