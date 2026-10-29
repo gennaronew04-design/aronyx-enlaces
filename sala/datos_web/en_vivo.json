@@ -1,8 +1,8 @@
 {
  "sala": "LA SALA ARONYX — EN VIVO",
  "distintivo": "PAPEL — SIN DINERO REAL",
- "actualizado": "2026-10-26T17:23:20",
- "ultima_sesion_procesada": "2026-10-26",
+ "actualizado": "2026-10-28T17:23:20",
+ "ultima_sesion_procesada": "2026-10-28",
  "capital_inicial": 10000.0,
  "equity": 10000.0,
  "cash": 10000.0,
@@ -23,10 +23,18 @@
   {
    "fecha": "2026-10-26",
    "equity": 10000.0
+  },
+  {
+   "fecha": "2026-10-27",
+   "equity": 10000.0
+  },
+  {
+   "fecha": "2026-10-28",
+   "equity": 10000.0
   }
  ],
  "contadores": {
-  "sesiones_procesadas": 1,
+  "sesiones_procesadas": 3,
   "dias_bloqueo_dia": 0,
   "semanas_bloqueo": 0,
   "paradas_totales": 0,
@@ -38,134 +46,174 @@
  "intradia": {
   "estado_mercado": {
    "estado": "abierto",
-   "hora_et": "2026-10-26T15:58:18-04:00",
+   "hora_et": "2026-10-29T13:26:45-04:00",
    "nota": "precios reales, refresco ~1 min (no tick a tick)"
   },
   "mercado": [
    {
     "nombre": "EUR/USD",
     "simbolo": "EURUSD=X",
-    "precio": 1.1183,
-    "cambio_dia_%": -0.19,
-    "hora_precio": "2026-10-26T15:52:45-04:00",
-    "reutilizado": true
+    "precio": 1.1173,
+    "cambio_dia_%": 0.14,
+    "hora_precio": "2026-10-29T13:26:41-04:00"
    },
    {
     "nombre": "GBP/USD",
     "simbolo": "GBPUSD=X",
-    "precio": 1.3348,
-    "cambio_dia_%": -0.2,
-    "hora_precio": "2026-10-26T15:43:44-04:00",
-    "reutilizado": true
+    "precio": 1.3371,
+    "cambio_dia_%": 0.33,
+    "hora_precio": "2026-10-29T13:26:41-04:00"
    },
    {
     "nombre": "USD/JPY",
     "simbolo": "USDJPY=X",
-    "precio": 157.492,
-    "cambio_dia_%": 0.43,
-    "hora_precio": "2026-10-26T15:59:31-04:00"
+    "precio": 157.881,
+    "cambio_dia_%": 0.08,
+    "hora_precio": "2026-10-29T13:27:04-04:00"
    },
    {
     "nombre": "USD/CHF",
     "simbolo": "USDCHF=X",
-    "precio": 0.8275,
-    "cambio_dia_%": 0.41,
-    "hora_precio": "2026-10-26T15:59:33-04:00"
+    "precio": 0.8259,
+    "cambio_dia_%": -0.21,
+    "hora_precio": "2026-10-29T13:27:05-04:00"
    },
    {
     "nombre": "AUD/USD",
     "simbolo": "AUDUSD=X",
-    "precio": 0.7023,
-    "cambio_dia_%": -0.21,
-    "hora_precio": "2026-10-26T15:34:44-04:00",
-    "reutilizado": true
+    "precio": 0.7039,
+    "cambio_dia_%": -0.26,
+    "hora_precio": "2026-10-29T13:26:41-04:00"
    },
    {
     "nombre": "USD/CAD",
     "simbolo": "USDCAD=X",
-    "precio": 1.4018,
-    "cambio_dia_%": 0.11,
-    "hora_precio": "2026-10-26T15:35:10-04:00",
-    "reutilizado": true
+    "precio": 1.3972,
+    "cambio_dia_%": -0.14,
+    "hora_precio": "2026-10-29T13:27:11-04:00"
    },
    {
     "nombre": "NZD/USD",
     "simbolo": "NZDUSD=X",
-    "precio": 0.5687,
-    "cambio_dia_%": -0.25,
-    "hora_precio": "2026-10-26T15:42:44-04:00",
-    "reutilizado": true
+    "precio": 0.5633,
+    "cambio_dia_%": 0.04,
+    "hora_precio": "2026-10-29T13:26:41-04:00"
    },
    {
     "nombre": "ORO",
     "simbolo": "GC=F",
-    "precio": 4025.6,
-    "cambio_dia_%": 0.44,
-    "hora_precio": "2026-10-26T15:25:08-04:00",
-    "reutilizado": true
+    "precio": 4034.5,
+    "cambio_dia_%": -0.42,
+    "hora_precio": "2026-10-29T13:17:16-04:00"
+   }
+  ],
+  "mercados_global": [
+   {
+    "nombre": "S&P 500",
+    "simbolo": "^GSPC",
+    "precio": 7708.76,
+    "cambio_dia_%": -0.45,
+    "hora_precio": "2026-10-29T13:27:17-04:00"
+   },
+   {
+    "nombre": "DOW JONES",
+    "simbolo": "^DJI",
+    "precio": 52245.73,
+    "cambio_dia_%": -0.44,
+    "hora_precio": "2026-10-29T13:27:19-04:00"
+   },
+   {
+    "nombre": "NASDAQ",
+    "simbolo": "^IXIC",
+    "precio": 26173.693,
+    "cambio_dia_%": -1.42,
+    "hora_precio": "2026-10-29T13:27:21-04:00"
+   },
+   {
+    "nombre": "BITCOIN",
+    "simbolo": "BTC-USD",
+    "precio": 81001.25,
+    "cambio_dia_%": -0.32,
+    "hora_precio": "2026-10-29T13:27:20-04:00"
+   },
+   {
+    "nombre": "ETHEREUM",
+    "simbolo": "ETH-USD",
+    "precio": 2348.4,
+    "cambio_dia_%": -0.38,
+    "hora_precio": "2026-10-29T13:27:19-04:00"
+   },
+   {
+    "nombre": "PLATA",
+    "simbolo": "SI=F",
+    "precio": 52.37,
+    "cambio_dia_%": -2.41,
+    "hora_precio": "2026-10-29T13:17:22-04:00"
+   },
+   {
+    "nombre": "PETRÓLEO",
+    "simbolo": "CL=F",
+    "precio": 101.63,
+    "cambio_dia_%": -1.12,
+    "hora_precio": "2026-10-29T13:17:29-04:00"
    }
   ],
   "precios": [
    {
     "simbolo": "SPY",
-    "precio": 765.15,
-    "cambio_dia_%": 0.68,
-    "volumen_hoy": 24982557,
-    "hora_precio": "2026-10-26T15:58:22-04:00"
+    "precio": 768.36,
+    "cambio_dia_%": -0.51,
+    "volumen_hoy": 17098615,
+    "hora_precio": "2026-10-29T13:26:44-04:00"
    },
    {
     "simbolo": "QQQ",
-    "precio": 712.125,
-    "cambio_dia_%": 1.1,
-    "volumen_hoy": 29509491,
-    "hora_precio": "2026-10-26T15:58:27-04:00"
+    "precio": 714.42,
+    "cambio_dia_%": -1.54,
+    "volumen_hoy": 16719397,
+    "hora_precio": "2026-10-29T13:26:47-04:00"
    },
    {
     "simbolo": "AAPL",
-    "precio": 343.892,
-    "cambio_dia_%": -1.1,
-    "volumen_hoy": 25171121,
-    "hora_precio": "2026-10-26T15:58:29-04:00"
+    "precio": 349.73,
+    "cambio_dia_%": 1.72,
+    "volumen_hoy": 17707218,
+    "hora_precio": "2026-10-29T13:26:48-04:00"
    },
    {
     "simbolo": "MSFT",
-    "precio": 532.88,
-    "cambio_dia_%": 1.6,
-    "volumen_hoy": 11579071,
-    "hora_precio": "2026-10-26T15:52:44-04:00",
-    "reutilizado": true
+    "precio": 524.505,
+    "cambio_dia_%": -1.23,
+    "volumen_hoy": 23449710,
+    "hora_precio": "2026-10-29T13:26:50-04:00"
    },
    {
     "simbolo": "NVDA",
-    "precio": 216.27,
-    "cambio_dia_%": 2.52,
-    "volumen_hoy": 67936105,
-    "hora_precio": "2026-10-26T15:52:47-04:00",
-    "reutilizado": true
+    "precio": 213.58,
+    "cambio_dia_%": -0.84,
+    "volumen_hoy": 38193391,
+    "hora_precio": "2026-10-29T13:26:51-04:00"
    },
    {
     "simbolo": "AMZN",
-    "precio": 248.9,
-    "cambio_dia_%": 0.36,
-    "volumen_hoy": 24683668,
-    "hora_precio": "2026-10-26T15:55:54-04:00",
-    "reutilizado": true
+    "precio": 246.17,
+    "cambio_dia_%": -3.31,
+    "volumen_hoy": 32310608,
+    "hora_precio": "2026-10-29T13:26:53-04:00"
    },
    {
     "simbolo": "META",
-    "precio": 627.95,
-    "cambio_dia_%": -2.28,
-    "volumen_hoy": 21983073,
-    "hora_precio": "2026-10-26T15:55:56-04:00",
-    "reutilizado": true
+    "precio": 630.17,
+    "cambio_dia_%": 2.89,
+    "volumen_hoy": 17883003,
+    "hora_precio": "2026-10-29T13:26:55-04:00"
    },
    {
     "simbolo": "GOOGL",
-    "precio": 317.12,
-    "cambio_dia_%": -0.96,
-    "volumen_hoy": 17253419,
-    "hora_precio": "2026-10-26T15:53:10-04:00",
-    "reutilizado": true
+    "precio": 283.58,
+    "cambio_dia_%": -12.72,
+    "volumen_hoy": 89455946,
+    "hora_precio": "2026-10-29T13:26:57-04:00"
    }
   ],
   "equity_flotante": 10000.0,
@@ -176,33 +224,33 @@
     "agente": "ANSUZ",
     "estrategia": "A — tendencia",
     "vigila": "AAPL",
-    "espera": "ruptura del máximo de 20 días ($348.36)",
-    "distancia_%": 1.3,
-    "detalle": "AAPL está a +1.30 % del disparador; tendencia sana (MM50>MM200) confirmada al último cierre."
+    "espera": "ruptura del máximo de 20 días ($351.73)",
+    "distancia_%": 0.57,
+    "detalle": "AAPL está a +0.57 % del disparador; tendencia sana (MM50>MM200) confirmada al último cierre."
    },
    {
     "agente": "THURISAZ",
     "estrategia": "A-rebote — MM50",
     "vigila": "SPY",
-    "espera": "toque de la MM50 ($767.81) con vela de rechazo",
-    "distancia_%": -0.35,
-    "detalle": "SPY cotiza -0.35 % sobre su MM50; el rebote exige toque + rechazo + confirmación al cierre."
+    "espera": "toque de la MM50 ($767.63) con vela de rechazo",
+    "distancia_%": 0.1,
+    "detalle": "SPY cotiza +0.10 % sobre su MM50; el rebote exige toque + rechazo + confirmación al cierre."
    },
    {
     "agente": "SOWILO",
     "estrategia": "B — ruptura de rango",
     "vigila": "AAPL",
-    "espera": "cierre sobre la resistencia del rango ($348.36) con RVOL ≥ 1,5",
-    "distancia_%": 1.3,
-    "detalle": "AAPL está a +1.30 % de su resistencia de 20 días; sin volumen 1,5x no hay ruptura válida."
+    "espera": "cierre sobre la resistencia del rango ($351.73) con RVOL ≥ 1,5",
+    "distancia_%": 0.57,
+    "detalle": "AAPL está a +0.57 % de su resistencia de 20 días; sin volumen 1,5x no hay ruptura válida."
    },
    {
     "agente": "EHWAZ",
     "estrategia": "C — retroceso",
-    "vigila": "SPY",
+    "vigila": "QQQ",
     "espera": "retroceso a la MM50 con RSI entre 40 y 52 y vela de rechazo",
-    "distancia_%": -0.35,
-    "detalle": "SPY: RSI 42.1 al último cierre y precio -0.35 % sobre la MM50."
+    "distancia_%": -1.52,
+    "detalle": "QQQ: RSI 49.6 al último cierre y precio -1.52 % sobre la MM50."
    },
    {
     "agente": "ALGIZ",
@@ -215,24 +263,24 @@
   ],
   "feed_actividad": [
    {
-    "hora": "15:58 ET",
+    "hora": "13:26 ET",
     "texto": "Mercado ABIERTO: la sala marca a mercado y estudia (las entradas las decide la corrida de cierre)."
    },
    {
-    "hora": "15:58 ET",
-    "texto": "EHWAZ vigila SPY: a -0.35 % de su disparador."
+    "hora": "13:26 ET",
+    "texto": "EHWAZ vigila QQQ: a -1.52 % de su disparador."
    },
    {
-    "hora": "15:58 ET",
-    "texto": "SOWILO vigila AAPL: a +1.30 % de su disparador."
+    "hora": "13:26 ET",
+    "texto": "SOWILO vigila AAPL: a +0.57 % de su disparador."
    },
    {
-    "hora": "15:58 ET",
-    "texto": "THURISAZ vigila SPY: a -0.35 % de su disparador."
+    "hora": "13:26 ET",
+    "texto": "THURISAZ vigila SPY: a +0.10 % de su disparador."
    },
    {
-    "hora": "15:58 ET",
-    "texto": "ANSUZ vigila AAPL: a +1.30 % de su disparador."
+    "hora": "13:26 ET",
+    "texto": "ANSUZ vigila AAPL: a +0.57 % de su disparador."
    }
   ]
  }
