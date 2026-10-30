@@ -1,8 +1,8 @@
 {
  "sala": "LA SALA ARONYX — EN VIVO",
  "distintivo": "PAPEL — SIN DINERO REAL",
- "actualizado": "2026-10-29T17:23:27",
- "ultima_sesion_procesada": "2026-10-29",
+ "actualizado": "2026-10-30T17:25:07",
+ "ultima_sesion_procesada": "2026-10-30",
  "capital_inicial": 10000.0,
  "equity": 10000.0,
  "cash": 10000.0,
@@ -35,10 +35,14 @@
   {
    "fecha": "2026-10-29",
    "equity": 10000.0
+  },
+  {
+   "fecha": "2026-10-30",
+   "equity": 10000.0
   }
  ],
  "contadores": {
-  "sesiones_procesadas": 4,
+  "sesiones_procesadas": 5,
   "dias_bloqueo_dia": 0,
   "semanas_bloqueo": 0,
   "paradas_totales": 0,
@@ -50,144 +54,130 @@
  "intradia": {
   "estado_mercado": {
    "estado": "abierto",
-   "hora_et": "2026-10-29T15:56:25-04:00",
+   "hora_et": "2026-10-30T13:27:30-04:00",
    "nota": "precios reales, refresco ~1 min (no tick a tick)"
   },
   "mercado": [
    {
     "nombre": "EUR/USD",
     "simbolo": "EURUSD=X",
-    "precio": 1.1168,
-    "cambio_dia_%": 0.1,
-    "hora_precio": "2026-10-29T15:24:44-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 1.1158,
+    "cambio_dia_%": -0.21,
+    "hora_precio": "2026-10-30T13:24:43-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "GBP/USD",
     "simbolo": "GBPUSD=X",
-    "precio": 1.3362,
-    "cambio_dia_%": 0.26,
-    "hora_precio": "2026-10-29T14:39:43-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 1.3395,
+    "cambio_dia_%": 0.15,
+    "hora_precio": "2026-10-30T13:18:43-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "USD/JPY",
     "simbolo": "USDJPY=X",
-    "precio": 157.931,
-    "cambio_dia_%": 0.11,
-    "hora_precio": "2026-10-29T15:51:51-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 157.489,
+    "cambio_dia_%": -0.1,
+    "hora_precio": "2026-10-30T13:26:37-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "USD/CHF",
     "simbolo": "USDCHF=X",
-    "precio": 0.8261,
-    "cambio_dia_%": -0.18,
-    "hora_precio": "2026-10-29T15:19:19-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 0.8236,
+    "cambio_dia_%": -0.02,
+    "hora_precio": "2026-10-30T12:56:43-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "AUD/USD",
     "simbolo": "AUDUSD=X",
-    "precio": 0.7036,
-    "cambio_dia_%": -0.3,
-    "hora_precio": "2026-10-29T14:10:42-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 0.7038,
+    "cambio_dia_%": 0.1,
+    "hora_precio": "2026-10-30T13:04:42-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "USD/CAD",
     "simbolo": "USDCAD=X",
-    "precio": 1.3979,
-    "cambio_dia_%": -0.09,
-    "hora_precio": "2026-10-29T14:21:58-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 1.395,
+    "cambio_dia_%": -0.26,
+    "hora_precio": "2026-10-30T12:56:43-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "NZD/USD",
     "simbolo": "NZDUSD=X",
-    "precio": 0.5632,
-    "cambio_dia_%": 0.02,
-    "hora_precio": "2026-10-29T14:10:42-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 0.5639,
+    "cambio_dia_%": 0.07,
+    "hora_precio": "2026-10-30T13:06:43-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "ORO",
     "simbolo": "GC=F",
-    "precio": 4030.4,
-    "cambio_dia_%": -0.52,
-    "hora_precio": "2026-10-29T15:42:30-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 3901.1,
+    "cambio_dia_%": -3.23,
+    "hora_precio": "2026-10-30T13:08:47-04:00",
+    "modo": "SOLO CONTEXTO"
    }
   ],
   "mercados_global": [
    {
     "nombre": "S&P 500",
     "simbolo": "^GSPC",
-    "precio": 7711.15,
-    "cambio_dia_%": -0.42,
-    "hora_precio": "2026-10-29T15:32:52-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 7579.5,
+    "cambio_dia_%": -1.82,
+    "hora_precio": "2026-10-30T13:25:05-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "DOW JONES",
     "simbolo": "^DJI",
-    "precio": 52247.17,
-    "cambio_dia_%": -0.43,
-    "hora_precio": "2026-10-29T15:20:11-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 51839.52,
+    "cambio_dia_%": -0.96,
+    "hora_precio": "2026-10-30T13:25:05-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "NASDAQ",
     "simbolo": "^IXIC",
-    "precio": 26126.836,
-    "cambio_dia_%": -1.59,
-    "hora_precio": "2026-10-29T14:12:18-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 25395.857,
+    "cambio_dia_%": -3.01,
+    "hora_precio": "2026-10-30T13:25:41-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "BITCOIN",
     "simbolo": "BTC-USD",
-    "precio": 80514.54,
-    "cambio_dia_%": -0.92,
-    "hora_precio": "2026-10-29T14:41:54-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 77126.93,
+    "cambio_dia_%": -0.85,
+    "hora_precio": "2026-10-30T13:26:36-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "ETHEREUM",
     "simbolo": "ETH-USD",
-    "precio": 2327.1,
-    "cambio_dia_%": -1.28,
-    "hora_precio": "2026-10-29T15:01:27-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 2241.61,
+    "cambio_dia_%": -0.32,
+    "hora_precio": "2026-10-30T13:25:07-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "PLATA",
     "simbolo": "SI=F",
-    "precio": 52.135,
-    "cambio_dia_%": -2.85,
-    "hora_precio": "2026-10-29T15:04:36-04:00",
-    "modo": "SOLO CONTEXTO",
-    "reutilizado": true
+    "precio": 49.215,
+    "cambio_dia_%": -6.04,
+    "hora_precio": "2026-10-30T12:46:43-04:00",
+    "modo": "SOLO CONTEXTO"
    },
    {
     "nombre": "PETRÓLEO",
     "simbolo": "CL=F",
-    "precio": 102.42,
-    "cambio_dia_%": -0.35,
-    "hora_precio": "2026-10-29T15:49:25-04:00",
+    "precio": 104.36,
+    "cambio_dia_%": 2.31,
+    "hora_precio": "2026-10-30T12:46:45-04:00",
     "modo": "SOLO CONTEXTO"
    }
   ],
@@ -225,271 +215,259 @@
      "simbolo": "AMD",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 565.95,
-     "cambio_dia_%": -2.16,
-     "hora_precio": "2026-10-29T15:59:25-04:00",
-     "mm50": 545.58,
-     "mm200": 407.36,
-     "distancia_mm50_%": 3.73,
+     "precio": 500.045,
+     "cambio_dia_%": -11.72,
+     "hora_precio": "2026-10-30T13:25:22-04:00",
+     "mm50": 547.58,
+     "mm200": 409.08,
+     "distancia_mm50_%": -8.68,
      "mm50_sobre_mm200": true,
      "tendencia_sana": true,
-     "rsi_ultimo_cierre": 53.6,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "AMD cotiza +3.73 % sobre su MM50 ($545.58); MM50 por encima de la MM200 ($407.36); RSI 53.6 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 50.9,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "AMD cotiza -8.68 % bajo su MM50 ($547.58); MM50 por encima de la MM200 ($409.08); RSI 50.9 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "AVGO",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 343.985,
-     "cambio_dia_%": -2.22,
-     "hora_precio": "2026-10-29T15:47:18-04:00",
-     "reutilizado": true,
-     "mm50": 353.91,
-     "mm200": 367.79,
-     "distancia_mm50_%": -2.81,
+     "precio": 323.51,
+     "cambio_dia_%": -6.23,
+     "hora_precio": "2026-10-30T13:25:19-04:00",
+     "mm50": 353.57,
+     "mm200": 367.74,
+     "distancia_mm50_%": -8.5,
      "mm50_sobre_mm200": false,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 52.6,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "AVGO cotiza -2.81 % bajo su MM50 ($353.91); MM50 por debajo de la MM200 ($367.79); RSI 52.6 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 49.1,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "AVGO cotiza -8.50 % bajo su MM50 ($353.57); MM50 por debajo de la MM200 ($367.74); RSI 49.1 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "NFLX",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 62.06,
-     "cambio_dia_%": 0.11,
-     "hora_precio": "2026-10-29T15:59:37-04:00",
-     "mm50": 73.4,
-     "mm200": 81.87,
-     "distancia_mm50_%": -15.45,
+     "precio": 62.27,
+     "cambio_dia_%": 0.35,
+     "hora_precio": "2026-10-30T13:11:27-04:00",
+     "mm50": 73.03,
+     "mm200": 81.73,
+     "distancia_mm50_%": -14.74,
      "mm50_sobre_mm200": false,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 30.3,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "NFLX cotiza -15.45 % bajo su MM50 ($73.40); MM50 por debajo de la MM200 ($81.87); RSI 30.3 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 30.5,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "NFLX cotiza -14.74 % bajo su MM50 ($73.03); MM50 por debajo de la MM200 ($81.73); RSI 30.5 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "COST",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 994.9,
-     "cambio_dia_%": 1.24,
-     "hora_precio": "2026-10-29T15:54:18-04:00",
-     "reutilizado": true,
-     "mm50": 940.95,
-     "mm200": 970.33,
-     "distancia_mm50_%": 5.73,
+     "precio": 1019.85,
+     "cambio_dia_%": 2.54,
+     "hora_precio": "2026-10-30T13:01:24-04:00",
+     "mm50": 941.73,
+     "mm200": 970.6,
+     "distancia_mm50_%": 8.3,
      "mm50_sobre_mm200": false,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 57.4,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "COST cotiza +5.73 % sobre su MM50 ($940.95); MM50 por debajo de la MM200 ($970.33); RSI 57.4 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 61.9,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "COST cotiza +8.30 % sobre su MM50 ($941.73); MM50 por debajo de la MM200 ($970.60); RSI 61.9 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "WMT",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 121.37,
-     "cambio_dia_%": 2.19,
-     "hora_precio": "2026-10-29T15:34:36-04:00",
-     "reutilizado": true,
-     "mm50": 109.7,
+     "precio": 123.83,
+     "cambio_dia_%": 2.13,
+     "hora_precio": "2026-10-30T13:25:11-04:00",
+     "mm50": 109.84,
      "mm200": 118.49,
-     "distancia_mm50_%": 10.64,
+     "distancia_mm50_%": 12.74,
      "mm50_sobre_mm200": false,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 64.2,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "WMT cotiza +10.64 % sobre su MM50 ($109.70); MM50 por debajo de la MM200 ($118.49); RSI 64.2 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 69.1,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "WMT cotiza +12.74 % sobre su MM50 ($109.84); MM50 por debajo de la MM200 ($118.49); RSI 69.1 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "JPM",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 343.61,
-     "cambio_dia_%": 1.27,
-     "hora_precio": "2026-10-29T15:59:17-04:00",
-     "mm50": 343.85,
-     "mm200": 322.64,
-     "distancia_mm50_%": -0.07,
+     "precio": 337.765,
+     "cambio_dia_%": -1.69,
+     "hora_precio": "2026-10-30T13:26:28-04:00",
+     "mm50": 343.58,
+     "mm200": 322.8,
+     "distancia_mm50_%": -1.69,
      "mm50_sobre_mm200": true,
      "tendencia_sana": true,
-     "rsi_ultimo_cierre": 52.8,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "JPM cotiza -0.07 % bajo su MM50 ($343.85); MM50 por encima de la MM200 ($322.64); RSI 52.8 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 58.1,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "JPM cotiza -1.69 % bajo su MM50 ($343.58); MM50 por encima de la MM200 ($322.80); RSI 58.1 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "BAC",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 51.145,
-     "cambio_dia_%": 0.58,
-     "hora_precio": "2026-10-29T15:59:22-04:00",
-     "mm50": 56.91,
-     "mm200": 54.98,
-     "distancia_mm50_%": -10.14,
+     "precio": 49.975,
+     "cambio_dia_%": -2.28,
+     "hora_precio": "2026-10-30T13:25:38-04:00",
+     "mm50": 56.67,
+     "mm200": 54.97,
+     "distancia_mm50_%": -11.82,
      "mm50_sobre_mm200": true,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 29.7,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "BAC cotiza -10.14 % bajo su MM50 ($56.91); MM50 por encima de la MM200 ($54.98); RSI 29.7 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 32.9,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "BAC cotiza -11.82 % bajo su MM50 ($56.67); MM50 por encima de la MM200 ($54.97); RSI 32.9 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "XOM",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 183.39,
-     "cambio_dia_%": 0.75,
-     "hora_precio": "2026-10-29T15:54:49-04:00",
-     "reutilizado": true,
-     "mm50": 166.97,
-     "mm200": 154.03,
-     "distancia_mm50_%": 9.83,
+     "precio": 187.09,
+     "cambio_dia_%": 2.07,
+     "hora_precio": "2026-10-30T13:26:25-04:00",
+     "mm50": 167.34,
+     "mm200": 154.31,
+     "distancia_mm50_%": 11.8,
      "mm50_sobre_mm200": true,
      "tendencia_sana": true,
-     "rsi_ultimo_cierre": 67.2,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "XOM cotiza +9.83 % sobre su MM50 ($166.97); MM50 por encima de la MM200 ($154.03); RSI 67.2 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 68.7,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "XOM cotiza +11.80 % sobre su MM50 ($167.34); MM50 por encima de la MM200 ($154.31); RSI 68.7 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "UNH",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 410.4,
-     "cambio_dia_%": 0.81,
-     "hora_precio": "2026-10-29T15:59:28-04:00",
-     "mm50": 389.31,
-     "mm200": 362.02,
-     "distancia_mm50_%": 5.42,
+     "precio": 408.32,
+     "cambio_dia_%": -0.63,
+     "hora_precio": "2026-10-30T13:25:46-04:00",
+     "mm50": 389.75,
+     "mm200": 362.4,
+     "distancia_mm50_%": 4.76,
      "mm50_sobre_mm200": true,
      "tendencia_sana": true,
-     "rsi_ultimo_cierre": 57.1,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "UNH cotiza +5.42 % sobre su MM50 ($389.31); MM50 por encima de la MM200 ($362.02); RSI 57.1 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 59.3,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "UNH cotiza +4.76 % sobre su MM50 ($389.75); MM50 por encima de la MM200 ($362.40); RSI 59.3 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "HD",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 326.25,
-     "cambio_dia_%": 2.74,
-     "hora_precio": "2026-10-29T14:37:19-04:00",
-     "reutilizado": true,
-     "mm50": 308.81,
-     "mm200": 334.79,
-     "distancia_mm50_%": 5.65,
+     "precio": 329.665,
+     "cambio_dia_%": 0.21,
+     "hora_precio": "2026-10-30T13:26:23-04:00",
+     "mm50": 308.51,
+     "mm200": 334.53,
+     "distancia_mm50_%": 6.86,
      "mm50_sobre_mm200": false,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 59.9,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "HD cotiza +5.65 % sobre su MM50 ($308.81); MM50 por debajo de la MM200 ($334.79); RSI 59.9 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 67.5,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "HD cotiza +6.86 % sobre su MM50 ($308.51); MM50 por debajo de la MM200 ($334.53); RSI 67.5 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "CRM",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 230.895,
-     "cambio_dia_%": -4.63,
-     "hora_precio": "2026-10-29T15:55:10-04:00",
-     "reutilizado": true,
-     "mm50": 237.93,
-     "mm200": 198.41,
-     "distancia_mm50_%": -2.96,
+     "precio": 230.06,
+     "cambio_dia_%": -0.36,
+     "hora_precio": "2026-10-30T13:01:47-04:00",
+     "mm50": 238.43,
+     "mm200": 198.36,
+     "distancia_mm50_%": -3.51,
      "mm50_sobre_mm200": true,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 53.6,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "CRM cotiza -2.96 % bajo su MM50 ($237.93); MM50 por encima de la MM200 ($198.41); RSI 53.6 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 43.7,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "CRM cotiza -3.51 % bajo su MM50 ($238.43); MM50 por encima de la MM200 ($198.36); RSI 43.7 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     },
     {
      "simbolo": "ORCL",
      "modo": "EN ESTUDIO",
      "operado": false,
-     "precio": 137.55,
-     "cambio_dia_%": -4.84,
-     "hora_precio": "2026-10-29T14:12:56-04:00",
-     "reutilizado": true,
-     "mm50": 142.11,
-     "mm200": 157.59,
-     "distancia_mm50_%": -3.21,
+     "precio": 130.96,
+     "cambio_dia_%": -6.16,
+     "hora_precio": "2026-10-30T13:26:46-04:00",
+     "mm50": 142.03,
+     "mm200": 157.28,
+     "distancia_mm50_%": -7.79,
      "mm50_sobre_mm200": false,
      "tendencia_sana": false,
-     "rsi_ultimo_cierre": 57.6,
-     "ultimo_cierre": "2026-10-28",
-     "detalle": "ORCL cotiza -3.21 % bajo su MM50 ($142.11); MM50 por debajo de la MM200 ($157.59); RSI 57.6 al último cierre (2026-10-28). SOLO ESTUDIO — no se opera."
+     "rsi_ultimo_cierre": 52.8,
+     "ultimo_cierre": "2026-10-29",
+     "detalle": "ORCL cotiza -7.79 % bajo su MM50 ($142.03); MM50 por debajo de la MM200 ($157.28); RSI 52.8 al último cierre (2026-10-29). SOLO ESTUDIO — no se opera."
     }
    ]
   },
   "precios": [
    {
     "simbolo": "SPY",
-    "precio": 768.9,
-    "cambio_dia_%": -0.44,
-    "volumen_hoy": 26325792,
-    "hora_precio": "2026-10-29T15:50:15-04:00",
-    "modo": "OPERADO (DEMO)",
-    "reutilizado": true
+    "precio": 755.35,
+    "cambio_dia_%": -1.82,
+    "volumen_hoy": 27359481,
+    "hora_precio": "2026-10-30T13:27:30-04:00",
+    "modo": "OPERADO (DEMO)"
    },
    {
     "simbolo": "QQQ",
-    "precio": 712.985,
-    "cambio_dia_%": -1.74,
-    "volumen_hoy": 19239053,
-    "hora_precio": "2026-10-29T14:13:59-04:00",
-    "modo": "OPERADO (DEMO)",
-    "reutilizado": true
+    "precio": 689.46,
+    "cambio_dia_%": -3.62,
+    "volumen_hoy": 40027137,
+    "hora_precio": "2026-10-30T13:27:32-04:00",
+    "modo": "OPERADO (DEMO)"
    },
    {
     "simbolo": "AAPL",
-    "precio": 348.85,
-    "cambio_dia_%": 1.46,
-    "volumen_hoy": 26629593,
-    "hora_precio": "2026-10-29T15:56:42-04:00",
+    "precio": 346.425,
+    "cambio_dia_%": -0.71,
+    "volumen_hoy": 25679291,
+    "hora_precio": "2026-10-30T13:27:34-04:00",
     "modo": "OPERADO (DEMO)"
    },
    {
     "simbolo": "MSFT",
-    "precio": 528.18,
-    "cambio_dia_%": -0.53,
-    "volumen_hoy": 30104008,
-    "hora_precio": "2026-10-29T15:30:54-04:00",
-    "modo": "OPERADO (DEMO)",
-    "reutilizado": true
+    "precio": 521.1,
+    "cambio_dia_%": -1.71,
+    "volumen_hoy": 14217264,
+    "hora_precio": "2026-10-30T13:27:36-04:00",
+    "modo": "OPERADO (DEMO)"
    },
    {
     "simbolo": "NVDA",
-    "precio": 213.04,
-    "cambio_dia_%": -1.09,
-    "volumen_hoy": 50973661,
-    "hora_precio": "2026-10-29T15:43:59-04:00",
-    "modo": "OPERADO (DEMO)",
-    "reutilizado": true
+    "precio": 203.53,
+    "cambio_dia_%": -4.74,
+    "volumen_hoy": 71285790,
+    "hora_precio": "2026-10-30T13:27:38-04:00",
+    "modo": "OPERADO (DEMO)"
    },
    {
     "simbolo": "AMZN",
-    "precio": 245.435,
-    "cambio_dia_%": -3.6,
-    "volumen_hoy": 45070804,
-    "hora_precio": "2026-10-29T15:44:11-04:00",
-    "modo": "OPERADO (DEMO)",
-    "reutilizado": true
+    "precio": 238.225,
+    "cambio_dia_%": -2.28,
+    "volumen_hoy": 67068517,
+    "hora_precio": "2026-10-30T13:27:42-04:00",
+    "modo": "OPERADO (DEMO)"
    },
    {
     "simbolo": "META",
-    "precio": 624.48,
-    "cambio_dia_%": 1.96,
-    "volumen_hoy": 25844053,
-    "hora_precio": "2026-10-29T15:57:18-04:00",
+    "precio": 620.81,
+    "cambio_dia_%": -0.59,
+    "volumen_hoy": 13146830,
+    "hora_precio": "2026-10-30T13:27:45-04:00",
     "modo": "OPERADO (DEMO)"
    },
    {
     "simbolo": "GOOGL",
-    "precio": 283.608,
-    "cambio_dia_%": -12.71,
-    "volumen_hoy": 120856450,
-    "hora_precio": "2026-10-29T15:57:22-04:00",
+    "precio": 278.92,
+    "cambio_dia_%": -1.73,
+    "volumen_hoy": 38173364,
+    "hora_precio": "2026-10-30T13:27:50-04:00",
     "modo": "OPERADO (DEMO)"
    }
   ],
@@ -502,32 +480,32 @@
     "estrategia": "A — tendencia",
     "vigila": "AAPL",
     "espera": "ruptura del máximo de 20 días ($351.73)",
-    "distancia_%": 0.83,
-    "detalle": "AAPL está a +0.83 % del disparador; tendencia sana (MM50>MM200) confirmada al último cierre."
+    "distancia_%": 1.53,
+    "detalle": "AAPL está a +1.53 % del disparador; tendencia sana (MM50>MM200) confirmada al último cierre."
    },
    {
     "agente": "THURISAZ",
     "estrategia": "A-rebote — MM50",
     "vigila": "SPY",
     "espera": "toque de la MM50 ($767.63) con vela de rechazo",
-    "distancia_%": 0.17,
-    "detalle": "SPY cotiza +0.17 % sobre su MM50; el rebote exige toque + rechazo + confirmación al cierre."
+    "distancia_%": -1.6,
+    "detalle": "SPY cotiza -1.60 % sobre su MM50; el rebote exige toque + rechazo + confirmación al cierre."
    },
    {
     "agente": "SOWILO",
     "estrategia": "B — ruptura de rango",
     "vigila": "AAPL",
     "espera": "cierre sobre la resistencia del rango ($351.73) con RVOL ≥ 1,5",
-    "distancia_%": 0.83,
-    "detalle": "AAPL está a +0.83 % de su resistencia de 20 días; sin volumen 1,5x no hay ruptura válida."
+    "distancia_%": 1.53,
+    "detalle": "AAPL está a +1.53 % de su resistencia de 20 días; sin volumen 1,5x no hay ruptura válida."
    },
    {
     "agente": "EHWAZ",
     "estrategia": "C — retroceso",
-    "vigila": "QQQ",
+    "vigila": "SPY",
     "espera": "retroceso a la MM50 con RSI entre 40 y 52 y vela de rechazo",
-    "distancia_%": -1.71,
-    "detalle": "QQQ: RSI 49.6 al último cierre y precio -1.71 % sobre la MM50."
+    "distancia_%": -1.6,
+    "detalle": "SPY: RSI 50.6 al último cierre y precio -1.60 % sobre la MM50."
    },
    {
     "agente": "ALGIZ",
@@ -540,24 +518,24 @@
   ],
   "feed_actividad": [
    {
-    "hora": "15:56 ET",
+    "hora": "13:27 ET",
     "texto": "Mercado ABIERTO: la sala marca a mercado y estudia (las entradas las decide la corrida de cierre)."
    },
    {
-    "hora": "15:56 ET",
-    "texto": "EHWAZ vigila QQQ: a -1.71 % de su disparador."
+    "hora": "13:27 ET",
+    "texto": "EHWAZ vigila SPY: a -1.60 % de su disparador."
    },
    {
-    "hora": "15:56 ET",
-    "texto": "SOWILO vigila AAPL: a +0.83 % de su disparador."
+    "hora": "13:27 ET",
+    "texto": "SOWILO vigila AAPL: a +1.53 % de su disparador."
    },
    {
-    "hora": "15:56 ET",
-    "texto": "THURISAZ vigila SPY: a +0.17 % de su disparador."
+    "hora": "13:27 ET",
+    "texto": "THURISAZ vigila SPY: a -1.60 % de su disparador."
    },
    {
-    "hora": "15:56 ET",
-    "texto": "ANSUZ vigila AAPL: a +0.83 % de su disparador."
+    "hora": "13:27 ET",
+    "texto": "ANSUZ vigila AAPL: a +1.53 % de su disparador."
    }
   ]
  }
