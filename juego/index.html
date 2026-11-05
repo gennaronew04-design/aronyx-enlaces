@@ -69,12 +69,14 @@
 <script type="module">
   /* Playroom (multijugador): se carga el paquete oficial como módulo y se
      exponen sus funciones en window.Playroom para el juego. */
-  try {
-    const P = await import('https://cdn.jsdelivr.net/npm/playroomkit/+esm');
-    window.Playroom = { insertCoin:P.insertCoin, isHost:P.isHost, myPlayer:P.myPlayer,
-      onPlayerJoin:P.onPlayerJoin, getState:P.getState, setState:P.setState,
-      getRoomCode:P.getRoomCode, RPC:P.RPC };
-  } catch(e){ window.Playroom = null; }
+  const urls = ['https://esm.sh/playroomkit@0.0.97',
+    'https://cdn.jsdelivr.net/npm/playroomkit/+esm'];
+  let P = null;
+  for(const u of urls){ try{ const M = await import(u);
+    if(M && M.insertCoin){ P = M; break; } }catch(e){} }
+  window.Playroom = P ? { insertCoin:P.insertCoin, isHost:P.isHost, myPlayer:P.myPlayer,
+    onPlayerJoin:P.onPlayerJoin, getState:P.getState, setState:P.setState,
+    getRoomCode:P.getRoomCode, RPC:P.RPC } : null;
 </script>
 </head>
 <body>
