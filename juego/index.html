@@ -54,6 +54,7 @@
   #stick { position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px; border-radius:50%; background:rgba(216,198,144,.35); }
   #fire { right:22px; bottom:96px; width:86px; height:86px; border-radius:50%; border:1.5px solid rgba(200,60,60,.65); background:rgba(90,10,16,.4); color:#ffb9b9; font-size:15px; letter-spacing:1px; pointer-events:auto; font-family:inherit; }
   #act { right:34px; bottom:196px; width:60px; height:60px; border-radius:50%; border:1.5px solid rgba(216,198,144,.55); background:rgba(30,24,10,.45); color:#ffe9a8; font-size:13px; pointer-events:auto; font-family:inherit; display:none; }
+  #reload { right:112px; bottom:200px; width:62px; height:62px; border-radius:50%; border:1.5px solid rgba(216,198,144,.55); background:rgba(30,24,10,.45); color:#ffe9a8; font-size:11px; letter-spacing:.5px; pointer-events:auto; font-family:inherit; display:none; }
   #weaps { position:fixed; right:14px; bottom:14px; z-index:26; display:none; gap:8px; }
   #weaps button { pointer-events:auto; background:rgba(0,0,0,.55); color:#d8c690; border:1px solid #8a6d34; padding:8px 10px; font-family:inherit; font-size:13px; }
   #weaps button.on { background:#3a2c10; color:#ffe9a8; }
@@ -103,6 +104,7 @@
 <div id="joy" class="touch"><div id="stick"></div></div>
 <button id="fire" class="touch">FUEGO</button>
 <button id="act" class="touch">USAR</button>
+<button id="reload" class="touch">RECARGA</button>
 <div id="weaps"></div>
 
 <div id="note"><div class="card"><h3 id="ntitle"></h3><p id="ntext"></p><button class="btn" id="nclose">Seguir</button></div></div>
@@ -178,17 +180,43 @@ const AU = {
     o.frequency.linearRampToValueAtTime(rand(50,80),this.now()+.5);
     f.type='bandpass'; f.frequency.value=600; f.Q.value=8; o.connect(f); f.connect(g); g.connect(this.master);
     this.env(g,this.now(),.08,.5,.05); o.start(); o.stop(this.now()+.7); },
-  shot(kind){ if(!this.ctx)return; const C=this.ctx,t=this.now();
-    const n=C.createBufferSource(); n.buffer=this.noiseBuf(.3);
-    const f=C.createBiquadFilter(); f.type='lowpass'; f.frequency.value= kind==='shotgun'?900:2400;
+  tick(t,fq,vol,dur){ if(!this.ctx)return; const C=this.ctx,o=C.createOscillator(),g=C.createGain();
+    o.type='square'; o.frequency.value=fq; o.connect(g); g.connect(this.master);
+    this.env(g,t,.002,dur||.05,vol); o.start(t); o.stop(t+(dur||.05)+.03); },
+  scrape(t,fq,vol,dur){ if(!this.ctx)return; const C=this.ctx,n=C.createBufferSource();
+    n.buffer=this.noiseBuf(dur+.05);
+    const f=C.createBiquadFilter(); f.type='bandpass'; f.frequency.value=fq; f.Q.value=2;
     const g=C.createGain(); n.connect(f); f.connect(g); g.connect(this.master);
-    this.env(g,t,.004, kind==='shotgun'?.32:.16, kind==='shotgun'?.9:.55); n.start(); n.stop(t+.4);
-    const o=C.createOscillator(),og=C.createGain(); o.type='sine';
-    o.frequency.setValueAtTime(kind==='rifle'?900:120,t); o.frequency.exponentialRampToValueAtTime(40,t+.18);
-    o.connect(og); og.connect(this.master); this.env(og,t,.005,.2, kind==='shotgun'?.7:.4); o.start(); o.stop(t+.25);
-    if(kind==='rifle'){ const z=C.createOscillator(),zg=C.createGain(); z.type='sawtooth';
-      z.frequency.setValueAtTime(1500,t); z.frequency.exponentialRampToValueAtTime(200,t+.22);
-      z.connect(zg); zg.connect(this.master); this.env(zg,t,.01,.22,.18); z.start(); z.stop(t+.3);} },
+    this.env(g,t,.01,dur,vol); n.start(t); n.stop(t+dur+.06); },
+  shot(kind){ if(!this.ctx)return; const C=this.ctx,t=this.now();
+    const burst=(dur,fq0,fq1,vol,type)=>{ const n=C.createBufferSource(); n.buffer=this.noiseBuf(dur+.1);
+      const f=C.createBiquadFilter(); f.type=type||'lowpass';
+      f.frequency.setValueAtTime(fq0,t); f.frequency.exponentialRampToValueAtTime(Math.max(fq1,40),t+dur);
+      const g=C.createGain(); n.connect(f); f.connect(g); g.connect(this.master);
+      this.env(g,t,.003,dur,vol); n.start(t); n.stop(t+dur+.12); };
+    const thump=(f0,f1,dur,vol)=>{ const o=C.createOscillator(),g=C.createGain(); o.type='sine';
+      o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(Math.max(f1,25),t+dur);
+      o.connect(g); g.connect(this.master); this.env(g,t,.004,dur,vol); o.start(t); o.stop(t+dur+.05); };
+    if(kind==='pistol'){            // Colt 1911: chasquido seco, brillante y corto
+      burst(.13,5200,900,.5,'highpass'); burst(.09,2600,500,.5); thump(210,55,.1,.35);
+      this.tick(t+.015,2900,.10,.03);
+    } else if(kind==='shotgun'){    // Escopeta: explosión grave y ancha + la bomba
+      burst(.42,3400,160,1.0); thump(120,28,.42,.95); burst(.2,700,120,.5);
+      this.scrape(t+.34,900,.20,.09); this.tick(t+.47,700,.22,.05); this.scrape(t+.52,700,.16,.07);
+    } else {                        // Rifle: latigazo con eco lejano + cerrojo
+      burst(.3,4200,300,.62,'bandpass'); burst(.5,900,90,.5); thump(300,42,.5,.5);
+      setTimeout(()=>this.tick(this.now(),2400,.09,.03), 120);
+      this.tick(t+.42,1500,.14,.04); this.scrape(t+.5,1100,.14,.08); this.tick(t+.62,1100,.16,.04); } },
+  dry(){ this.tick(this.now(),1900,.16,.035); },
+  pick(){ const t=this.now(); this.tick(t,1500,.13,.04); this.tick(t+.07,2250,.11,.04); },
+  reloadStart(kind){ if(!this.ctx)return; const t=this.now();
+    if(kind==='pistol'){ this.tick(t,1200,.16,.04); this.tick(t+.14,800,.18,.05); }
+    else if(kind==='shotgun'){ this.scrape(t,800,.2,.1); this.tick(t+.13,650,.2,.05); }
+    else { this.tick(t,1400,.15,.04); this.scrape(t+.12,1200,.15,.09); this.tick(t+.24,1000,.15,.04); } },
+  reloadEnd(kind){ if(!this.ctx)return; const t=this.now();
+    if(kind==='pistol'){ this.tick(t,900,.2,.05); this.scrape(t+.13,1800,.18,.07); this.tick(t+.22,2100,.16,.03); }
+    else if(kind==='shotgun'){ this.scrape(t,750,.22,.09); this.tick(t+.12,600,.24,.06); }
+    else { this.scrape(t,1000,.16,.08); this.tick(t+.14,1300,.2,.05); } },
   hit(){ if(!this.ctx)return; const C=this.ctx,t=this.now(),n=C.createBufferSource(); n.buffer=this.noiseBuf(.12);
     const f=C.createBiquadFilter(); f.type='lowpass'; f.frequency.value=500; const g=C.createGain();
     n.connect(f); f.connect(g); g.connect(this.master); this.env(g,t,.005,.1,.5); n.start(); n.stop(t+.15); },
@@ -709,11 +737,13 @@ scene.add(dust);
 /* ---------------- ESTADO DEL JUEGO ---------------- */
 const G = { mode:'menu', hp:100, pts:0, wave:0, kills:0,
   weapons:{ pistol:true, shotgun:false, rifle:false }, cur:'pistol',
+  ammo:{ pistol:{mag:7,res:28}, shotgun:{mag:6,res:12}, rifle:{mag:5,res:15} },
+  reloading:false, reloadEnd:0,
   enemies:[], parts:[], pools:[], startedAt:0, interT:0 };
 const WEAPONS = {
-  pistol:  { name:'PISTOLA DE PLATA', dmg:34, rate:.35, pellets:1, spread:.012, auto:false },
-  shotgun: { name:'ESCOPETA DEL SIGILO', dmg:13, rate:.95, pellets:6, spread:.075, auto:false },
-  rifle:   { name:'RIFLE DE LUZ', dmg:22, rate:.30, pellets:1, spread:0, auto:true, pierce:true } };
+  pistol:  { name:'PISTOLA DE PLATA', dmg:34, rate:.35, pellets:1, spread:.012, auto:false, magSize:7, reloadT:1.15, box:21, maxRes:84 },
+  shotgun: { name:'ESCOPETA DEL SIGILO', dmg:13, rate:.95, pellets:6, spread:.075, auto:false, magSize:6, reloadT:2.3, box:8, maxRes:48 },
+  rifle:   { name:'RIFLE DE LUZ', dmg:22, rate:.30, pellets:1, spread:0, auto:true, pierce:true, magSize:5, reloadT:1.9, box:10, maxRes:60 } };
 
 /* ---------------- JUGADOR ---------------- */
 const P = { x:0, z:9, y:1.62, yaw:0, pitch:0, lastShot:0, hurtT:0, dead:false };
@@ -800,6 +830,33 @@ addPickup('shotgun', 14, -6.2);   // dormitorio, junto a la cama
 addPickup('rifle', -15.6, -10.6); // salón, junto a la caja fuerte
 addPickup('shotgun', -13.1, 20.4, groundY(-13.1,20.4)+.85);  // BOSQUE: junto al pozo
 addPickup('rifle', 5.9, 30.5, groundY(5.9,30.5)+.85);        // BOSQUE: al borde del camino
+
+/* Cajas de munición: la municion NO es infinita — hay que buscarla */
+const ammoBoxes=[];
+function addAmmoBox(kind,x,z){ const g=new THREE.Group();
+  const inside = Math.abs(x)<18.4 && Math.abs(z)<12.4;
+  const baseY = inside? 0 : groundY(x,z);
+  const crate=new THREE.Mesh(new THREE.BoxGeometry(.36,.2,.26),
+    new THREE.MeshStandardMaterial({ color:0x2c3126, metalness:.3, roughness:.6 }));
+  crate.position.y=.12; crate.castShadow=true; g.add(crate);
+  const bandC = kind==='pistol'? 0xd8b13c : kind==='shotgun'? 0xb8352a : 0x3c78d8;
+  const band=new THREE.Mesh(new THREE.BoxGeometry(.37,.07,.27),
+    new THREE.MeshStandardMaterial({ color:bandC, emissive:bandC, emissiveIntensity:.4 }));
+  band.position.y=.15; g.add(band);
+  for(let i=0;i<3;i++){ const b=new THREE.Mesh(new THREE.CylinderGeometry(.014,.014,.06,6), matGold);
+    b.rotation.z=Math.PI/2; b.position.set(-.08+i*.08,.245,0); g.add(b); }
+  g.position.set(x, baseY, z); scene.add(g);
+  ammoBoxes.push({ kind, x, z, g, baseY, taken:false, bob:rand(0,6) }); }
+addAmmoBox('pistol', 2.4, 14.8);    // porche
+addAmmoBox('shotgun', -12.4, 21.2); // junto al pozo
+addAmmoBox('rifle', 40, 41);        // orilla del arroyo
+addAmmoBox('pistol', -3.2, 33);     // mitad del camino
+addAmmoBox('shotgun', -38, 13);     // bosque oeste
+addAmmoBox('pistol', 3.9, 10.4);    // vestíbulo
+addAmmoBox('rifle', -15.6, 9.2);    // biblioteca
+addAmmoBox('shotgun', 14.2, 8.2);   // cocina
+addAmmoBox('pistol', 15.2, -8.2);   // dormitorio
+addAmmoBox('rifle', -14.2, -8.6);   // salón
 
 const NOTES = [
  { x:-11, z:9.4, t:'Nota I — La casa', s:'«Esta casa fue el refugio de la Orden ARONYX. En su puerta brilla nuestro sigilo: un hexágono de obsidiana con la A de oro fundido. Quien entra bajo el sigilo entra como familia… pero la casa pone a prueba a su familia.»' },
@@ -1025,8 +1082,16 @@ function tracer(from,to,color){ const g=new THREE.BufferGeometry().setFromPoints
 
 const raycaster = new THREE.Raycaster();
 function shoot(){ const now = performance.now()/1000, W = WEAPONS[G.cur];
-  if(now - P.lastShot < W.rate || G.mode!=='play') return; P.lastShot = now;
+  if(now - P.lastShot < W.rate || G.mode!=='play' || G.reloading) return;
+  const A = G.ammo[G.cur];
+  if(A.mag<=0){ P.lastShot = now; AU.dry();
+    if(A.res>0) startReload();
+    else banner('¡SIN MUNICIÓN!','Busca cajas de balas por la casa y el bosque 📦');
+    return; }
+  A.mag--; P.lastShot = now;
   AU.shot(G.cur); flash.visible=true; setTimeout(()=>flash.visible=false,45);
+  updateHUD();
+  if(A.mag===0 && A.res>0) setTimeout(()=>{ if(!G.reloading && G.ammo[G.cur].mag===0) startReload(); }, 420);
   G.kick=1;
   const origin = camera.position.clone();
   for(let p=0;p<W.pellets;p++){
@@ -1094,6 +1159,7 @@ addEventListener('keydown', e=>{ keys[e.code]=true;
   if(e.code==='Digit1'&&G.weapons.pistol) setWeapon('pistol');
   if(e.code==='Digit2'&&G.weapons.shotgun) setWeapon('shotgun');
   if(e.code==='Digit3'&&G.weapons.rifle) setWeapon('rifle');
+  if(e.code==='KeyR') startReload();
   if(e.code==='KeyE') interact(); });
 addEventListener('keyup', e=>keys[e.code]=false);
 renderer.domElement.addEventListener('click', ()=>{ if(G.mode==='play' && !isTouch)
@@ -1127,11 +1193,20 @@ function setupTouch(){ isTouch=true;
     if(e.touches.length===0){ joyVec.x=0; joyVec.y=0; $('stick').style.transform=''; } });
   $('fire').addEventListener('touchstart', e=>{ e.preventDefault(); firing=true; }, {passive:false});
   $('fire').addEventListener('touchend', ()=> firing=false);
-  $('act').addEventListener('touchstart', e=>{ e.preventDefault(); interact(); }, {passive:false}); }
+  $('act').addEventListener('touchstart', e=>{ e.preventDefault(); interact(); }, {passive:false});
+  $('reload').addEventListener('touchstart', e=>{ e.preventDefault(); startReload(); }, {passive:false});
+  $('reload').style.display='block'; }
 addEventListener('touchstart', function once(){ setupTouch();
   removeEventListener('touchstart', once); }, { once:true });
 
-function setWeapon(w){ if(!G.weapons[w]) return; G.cur=w;
+function startReload(){ const W=WEAPONS[G.cur], A=G.ammo[G.cur];
+  if(G.reloading || G.mode!=='play' || A.mag>=W.magSize || A.res<=0) return;
+  G.reloading=true; G.reloadEnd=performance.now()/1000 + W.reloadT;
+  AU.reloadStart(G.cur); updateHUD(); }
+function finishReload(){ const W=WEAPONS[G.cur], A=G.ammo[G.cur];
+  const take=Math.min(W.magSize-A.mag, A.res); A.mag+=take; A.res-=take;
+  G.reloading=false; AU.reloadEnd(G.cur); updateHUD(); }
+function setWeapon(w){ if(!G.weapons[w]) return; G.reloading=false; G.cur=w;
   viewPistol.group.visible = w==='pistol';
   viewShotgun.group.visible = w==='shotgun';
   viewRifle.group.visible = w==='rifle';
@@ -1164,9 +1239,12 @@ function interact(){ if(G.mode!=='play') return; const it=nearestInteract(); if(
     if(it.p.ring) scene.remove(it.p.ring);
     for(const o of pickups){ if(o!==it.p && o.kind===it.p.kind && !o.taken){ o.taken=true;
       scene.remove(o.mesh); scene.remove(o.light); if(o.ring) scene.remove(o.ring); } }
-    G.weapons[it.p.kind]=true; buildWeaponButtons(); setWeapon(it.p.kind); G.pts+=25;
-    banner(it.p.kind==='shotgun'?'ESCOPETA DEL SIGILO':'RIFLE DE LUZ','La plata despierta en tus manos');
-    if(it.p.kind==='shotgun') setTimeout(()=>Scares.jumpscare(), 350);
+    if(G.weapons[it.p.kind]){ const A=G.ammo[it.p.kind], W=WEAPONS[it.p.kind];
+      A.res=Math.min(W.maxRes, A.res + W.box*2); G.pts+=10;
+      banner('+ '+(W.box*2)+' BALAS', W.name+' — munición extra'); AU.pick(); updateHUD(); }
+    else { G.weapons[it.p.kind]=true; buildWeaponButtons(); setWeapon(it.p.kind); G.pts+=25;
+      banner(it.p.kind==='shotgun'?'ESCOPETA DEL SIGILO':'RIFLE DE LUZ','La plata despierta en tus manos');
+      if(it.p.kind==='shotgun') setTimeout(()=>Scares.jumpscare(), 350); }
     AU.chime(); }
   else if(it.type==='note'){ it.n.read=true; G.pts+=50; it.n.mesh.material.color.set(0x8a8266);
     $('ntitle').textContent=it.n.t; $('ntext').textContent=it.n.s; $('note').style.display='flex'; G.mode='note'; }
@@ -1183,12 +1261,17 @@ function banner(txt, sub){ const b=$('banner');
   b.innerHTML = txt + (sub?`<small>${sub}</small>`:''); b.style.opacity=1;
   clearTimeout(b._t); b._t=setTimeout(()=>b.style.opacity=0, 2900); }
 function updateHUD(){ $('hp').style.width = clamp(G.hp,0,100)+'%';
-  $('pval').textContent = G.pts; $('wep').textContent = WEAPONS[G.cur].name;
+  $('pval').textContent = G.pts;
+  { const A=G.ammo[G.cur], W=WEAPONS[G.cur];
+    $('wep').textContent = W.name+'  ·  '+A.mag+' / '+A.res+
+      (G.reloading?'  ⟳ RECARGANDO…': A.mag===0 ? (A.res>0?'  ·  ¡RECARGA! [R]':'  ·  ¡SIN MUNICIÓN!') : '');
+    $('wep').style.color = A.mag===0? '#ff8a7a':''; }
   $('wval').textContent = G.wave>=6 ? 'EL GUARDIÁN' : 'OLEADA '+Math.max(1,G.wave);
   const alive = G.enemies.filter(e=>!e.dead && !e.ambient).length;
   $('eval').textContent = G.waveState==='boss' ? 'El Guardián despierta…' :
     'Sombras: ' + (alive + G.spawnQueue.length); }
 function startWave(n){ G.wave=n; G.waveState='combat'; G.spawnQueue=spawnForWave(n);
+  for(const b of ammoBoxes){ b.taken=false; b.g.visible=true; }
   G.spawnT=0; G.screams=0; banner('OLEADA '+n, n===1?(isInside(P.x,P.z)?'La niebla entra por las ventanas…':'Cruza el bosque. La casa te espera…'):
     n===3?'Algo susurra entre los libros…': n===5?'La puerta de la Cámara tiembla…':'Las Sombras obedecen');
   if(n===2) setTimeout(()=>Scares.portrait(), 2500);
@@ -1551,6 +1634,12 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
         setTimeout(()=>{ MP.doorSent=false; }, 2000); } }
     DOOR.t += ((DOOR.open?1:0)-DOOR.t)*Math.min(1,dt*5);
     doorPivot.rotation.y = -DOOR.t*1.85;
+    if(G.reloading && performance.now()/1000>=G.reloadEnd) finishReload();
+    for(const b of ammoBoxes){ if(b.taken) continue; b.g.rotation.y += dt*.9;
+      b.g.position.y = b.baseY + Math.sin(performance.now()/500+b.bob)*.05;
+      if(G.mode==='play' && dist2(P.x,P.z,b.x,b.z)<1.6){ const BA=G.ammo[b.kind], BW=WEAPONS[b.kind];
+        if(BA.res<BW.maxRes){ BA.res=Math.min(BW.maxRes, BA.res+BW.box); b.taken=true; b.g.visible=false;
+          banner('+ '+BW.box+' BALAS', BW.name); AU.pick(); updateHUD(); } } }
     waterMat.map.offset.x = elapsed*.02;
     flies.rotation.y = elapsed*.006;
     G.kick = Math.max(0, G.kick-dt*7);
@@ -1751,6 +1840,21 @@ if(new URLSearchParams(location.search).get('qc')==='12'){
       ' final=('+x.toFixed(1)+','+z.toFixed(1)+') '+(z<11.4?'DENTRO':'FUERA')+' z:'+pasos.join('>');
     P.x=0.3; P.z=9.5; P.yaw=Math.PI; P.pitch=0;   // vista desde dentro hacia la puerta
   }, 600); });
+}
+/* QC13: munición finita + recarga + cajas + sonidos por arma. */
+if(new URLSearchParams(location.search).get('qc')==='13'){
+  addEventListener('load', ()=>{ setTimeout(()=>{ $('play').click();
+    G.hp=100000; G.spawnQueue.length=0;
+    const A=()=>G.ammo.pistol, antes=A().mag+'/'+A().res;
+    for(let i=0;i<7;i++){ P.lastShot=0; shoot(); }
+    const tras=A().mag+'/'+A().res;
+    if(!G.reloading) startReload();
+    if(G.reloading) finishReload();
+    const rec=A().mag+'/'+A().res;
+    AU.shot('pistol'); AU.shot('shotgun'); AU.shot('rifle'); AU.dry();
+    document.title='QC13 antes='+antes+' 7disparos='+tras+' recarga='+rec+
+      ' cajas='+ammoBoxes.length+' hud=['+$('wep').textContent+']';
+  }, 700); });
 }
 </script>
 </body>
