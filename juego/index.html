@@ -66,7 +66,16 @@
   #win h1 { font-size: clamp(26px, 6vw, 50px); letter-spacing:4px; text-shadow:0 0 30px rgba(212,175,55,.6); padding:0 14px; }
   #win p { margin-top:14px; color:#cbbd92; max-width:540px; padding:0 18px; line-height:1.65; }
 </style>
-<script src="https://cdn.joinplayroom.com/playroomkit/multiplayer.umd.js"></script>
+<script type="module">
+  /* Playroom (multijugador): se carga el paquete oficial como módulo y se
+     exponen sus funciones en window.Playroom para el juego. */
+  try {
+    const P = await import('https://cdn.jsdelivr.net/npm/playroomkit/+esm');
+    window.Playroom = { insertCoin:P.insertCoin, isHost:P.isHost, myPlayer:P.myPlayer,
+      onPlayerJoin:P.onPlayerJoin, getState:P.getState, setState:P.setState,
+      getRoomCode:P.getRoomCode, RPC:P.RPC };
+  } catch(e){ window.Playroom = null; }
+</script>
 </head>
 <body>
 <div id="game"></div>
@@ -1414,6 +1423,8 @@ MP.tick = (dt)=>{ if(!MP.me) return;
         if(!P.dead) gameOver();
         else $('endtxt').textContent='La casa ha ganado. Todo el equipo ha caído en la niebla.'; } } } };
 async function startCoop(){ const msg=$('mpmsg');
+  if(!window.Playroom){ msg.textContent='Cargando el servicio multijugador…';
+    await new Promise(r=>setTimeout(r,1500)); }
   if(!window.Playroom){ msg.textContent='⚠️ El servicio multijugador no cargó. Revisa tu conexión y recarga la página.'; return; }
   msg.textContent='Abriendo la sala… Pon tu nombre, espera a tu equipo y toca LAUNCH.';
   try{ await Playroom.insertCoin(MP.testOpts || { maxPlayersPerRoom:4 });
