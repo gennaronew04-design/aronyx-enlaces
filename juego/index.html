@@ -66,6 +66,7 @@
   #win h1 { font-size: clamp(26px, 6vw, 50px); letter-spacing:4px; text-shadow:0 0 30px rgba(212,175,55,.6); padding:0 14px; }
   #win p { margin-top:14px; color:#cbbd92; max-width:540px; padding:0 18px; line-height:1.65; }
 </style>
+<script src="https://cdn.joinplayroom.com/playroomkit/multiplayer.umd.js"></script>
 </head>
 <body>
 <div id="game"></div>
@@ -102,6 +103,8 @@
   <p>El bosque prohibido despierta con la niebla… y la tierra escupe a sus muertos. Al final del camino se alza la casa de la Orden, donde la Gema duerme bajo la mirada del Guardián. Cruza el bosque, entra por la puerta principal y releva al Guardián… si la casa te deja.</p>
   <p style="font-size:13px;color:#8f8262">🖱️ Ratón para mirar · WASD para moverte · Click para disparar · E para usar<br>📱 En tableta/teléfono: joystick, arrastra para mirar, botón FUEGO · se juega en horizontal</p>
   <button class="btn" id="play">ENTRAR EN LA CASA</button>
+  <button class="btn" id="coop" style="margin-top:10px">🌐 CO-OP EN LÍNEA (1-4 JUGADORES)</button>
+  <p id="mpmsg" style="color:#ffd977;font-size:13px;max-width:520px;margin:8px auto 0"></p>
   <div class="warn">⚠ TERROR CON SUSTOS Y GORE — SOLO VALIENTES</div>
 </div>
 
@@ -757,15 +760,18 @@ function buildRifle(){ const g=new THREE.Group();   // Francotirador de cerrojo 
   part(g, new THREE.BoxGeometry(.012,.04,.012), matSteel, 0,.075,-.05);
   [-1,1].forEach(s=>{ part(g, new THREE.CylinderGeometry(.004,.004,.17,5), matSteel, s*.02,-.03,-.62, .5,0,s*.35); }); // bípode plegado
   return { group:g, tipZ:-.8 }; }
-function addPickup(kind,x,z){ const built = kind==='shotgun'? buildShotgun() : buildRifle();
-  const g=built.group; g.scale.setScalar(1.35); g.position.set(x,.85,z); scene.add(g);
+function addPickup(kind,x,z,baseY){ const built = kind==='shotgun'? buildShotgun() : buildRifle();
+  const by = baseY===undefined? .85 : baseY;
+  const g=built.group; g.scale.setScalar(1.35); g.position.set(x,by,z); scene.add(g);
   const ring=new THREE.Mesh(new THREE.TorusGeometry(.4,.02,6,24),
     new THREE.MeshBasicMaterial({ color:0xffca7a }));
-  ring.rotation.x=Math.PI/2; ring.position.set(x,.5,z); scene.add(ring);
-  const L=new THREE.PointLight(kind==='shotgun'?0xffca7a:0x9fd8ff,.7,5); L.position.set(x,1.2,z); scene.add(L);
-  pickups.push({kind,mesh:g,ring,light:L,x,z,taken:false}); }
+  ring.rotation.x=Math.PI/2; ring.position.set(x,by-.35,z); scene.add(ring);
+  const L=new THREE.PointLight(kind==='shotgun'?0xffca7a:0x9fd8ff,.7,5); L.position.set(x,by+.35,z); scene.add(L);
+  pickups.push({kind,mesh:g,ring,light:L,x,z,taken:false,baseY:by}); }
 addPickup('shotgun', 14, -6.2);   // dormitorio, junto a la cama
 addPickup('rifle', -15.6, -10.6); // salón, junto a la caja fuerte
+addPickup('shotgun', -13.1, 20.4, groundY(-13.1,20.4)+.85);  // BOSQUE: junto al pozo
+addPickup('rifle', 5.9, 30.5, groundY(5.9,30.5)+.85);        // BOSQUE: al borde del camino
 
 const NOTES = [
  { x:-11, z:9.4, t:'Nota I — La casa', s:'«Esta casa fue el refugio de la Orden ARONYX. En su puerta brilla nuestro sigilo: un hexágono de obsidiana con la A de oro fundido. Quien entra bajo el sigilo entra como familia… pero la casa pone a prueba a su familia.»' },
@@ -816,11 +822,13 @@ const bloodMat = new THREE.MeshBasicMaterial({ color:0x8f0f1c });
 function buildHumanoid(g,type){
   const brute = type==='pesada'||type==='guardian';
   const lean = type==='runner';
-  const skin = photoSkin(brute?0xb9c2cb : type==='lurker'?0x87a8b5 : 0x9fb0bd);
+  const skin = photoSkin(brute?0xb9c2cb : type==='lurker'?0x87a8b5 :
+    type==='caliper'?0xa8b3a0 : 0x9fb0bd);
   const face = brute ? 'cara_brute' : type==='runner' ? 'cara_runner' :
-    type==='susurrante' ? 'cara_screamer' : type==='lurker' ? 'cara_caliper' : 'cara_shambler';
-  const hunch = type==='runner'?.46 : brute?.24 : type==='susurrante'?.3 : .38;
-  const W = brute?1.3 : lean?.82 : 1;
+    type==='susurrante' ? 'cara_screamer' : type==='caliper' ? 'cara_caliper' : 'cara_shambler';
+  const hunch = type==='runner'?.46 : brute?.24 : type==='susurrante'?.3 :
+    type==='caliper'?.44 : .38;
+  const W = brute?1.3 : lean?.82 : type==='caliper'?.9 : 1;
   const parts={ hunch };
   const torso=new THREE.Group(); torso.position.y=.94; torso.rotation.x=hunch; g.add(torso);
   parts.torso=torso;
@@ -872,10 +880,7 @@ function buildHumanoid(g,type){
     const p3=new THREE.Mesh(new THREE.BoxGeometry(.3,.09,.3), bone);
     p3.position.y=.44; headG.add(p3); }
   g.userData.parts=parts; return parts; }
-function makeSombra(x,z,type,wave){
-  const g=new THREE.Group();
-  const scale = type==='pesada'?1.55 : type==='guardian'?2.3 : type==='runner'?.92 :
-    type==='spitter'?1.15 : type==='lurker'?1.05 : 1;
+function buildEnemyMesh(g,type){
   if(type==='spitter'){ // TOXIC SPITTER: cuerpo bajo de araña con glándulas verdes
     const bodyS=new THREE.Mesh(new THREE.SphereGeometry(.5,10,8), photoSkin(0x9fb0bd));
     bodyS.scale.set(1,.62,1); bodyS.position.y=.55; bodyS.castShadow=true; g.add(bodyS);
@@ -893,12 +898,18 @@ function makeSombra(x,z,type,wave){
     if(type==='guardian'){ const ring=new THREE.Mesh(new THREE.TorusGeometry(.85,.035,6,32),
       new THREE.MeshBasicMaterial({ color:0xd4af37 })); ring.rotation.x=Math.PI/2; ring.position.y=.3; g.add(ring); g.userData.ring=ring; }
   }
+  return g; }
+function makeSombra(x,z,type,wave){
+  const g=new THREE.Group();
+  const scale = type==='pesada'?1.55 : type==='guardian'?2.3 : type==='runner'?.92 :
+    type==='spitter'?1.15 : type==='lurker'?1.05 : type==='caliper'?1.02 : 1;
+  buildEnemyMesh(g,type);
   g.scale.setScalar(scale); g.position.set(x,0,z); scene.add(g);
   const hp = type==='guardian'?600 : type==='pesada'?190 : type==='spitter'?55+(wave-1)*10 :
-    type==='runner'?30+(wave-1)*8 : type==='lurker'?80 : 40+(wave-1)*15;
-  const e = { mesh:g, x, z, hp, maxhp:hp, type, scale, state:'chase', gy:0,
+    type==='runner'?30+(wave-1)*8 : type==='caliper'?55+(wave-1)*10 : type==='lurker'?80 : 40+(wave-1)*15;
+  const e = { mesh:g, x, z, hp, maxhp:hp, type, scale, state:'chase', gy:0, netId:(++MP.netSeq),
     speed:(type==='pesada'?1.3: type==='guardian'?1.55: type==='runner'?3.55:
-      type==='spitter'?1.5: type==='lurker'?2.7: 2.05+wave*.12),
+      type==='spitter'?1.5: type==='caliper'?2.5: type==='lurker'?2.7: 2.05+wave*.12),
     atkT:0, phase:0, pulseT:3, twinsDone:false, dead:false, bobT:rand(0,6),
     buffT:0, screamT:rand(3,6), spitT:rand(1,2.5), strayT:0, ambient:type==='lurker' };
   G.enemies.push(e); return e; }
@@ -913,21 +924,27 @@ function makeWindowSombra(win,type,wave){
   e.state='climb'; e.win=win; e.climbT=0; e.climbDur=rand(1.15,1.4); e.glassDone=false;
   e.mesh.position.y=-.5; burst(win.x,1.3,win.z,0x444466,12,1.3,1.8); return e; }
 const WAVES = [ null,
-  { n:4, at:2 }, { n:6, at:3 }, { n:8, at:3 }, { n:10, at:4 }, { n:12, at:4 } ];
+  { n:6, at:2 }, { n:9, at:3 }, { n:12, at:3 }, { n:15, at:4 }, { n:18, at:4 } ];
 function spawnForWave(w){ const n=WAVES[w].n, list=[];
   for(let i=0;i<n;i++){ let t='normal';
     if(w===2 && i===4) t='runner';
+    if(w===2 && i===2) t='caliper';
     if(w===3 && i===2) t='susurrante';
+    if(w===3 && i===4) t='caliper';
     if(w===3 && i===5) t='runner';
+    if(w===4 && i===2) t='caliper';
     if(w===4 && i===3) t='pesada';
     if(w===4 && i===5) t='spitter';
     if(w===4 && i===6) t='susurrante';
     if(w===4 && (i===7||i===9)) t='runner';
     if(w===5 && (i===2||i===6)) t='susurrante';
+    if(w===5 && i===3) t='caliper';
     if(w===5 && i===4) t='runner';
+    if(w===5 && i===7) t='caliper';
     if(w===5 && i===8) t='pesada';
     if(w===5 && i===9) t='spitter';
     if(w===5 && i===10) t='runner';
+    if(i>=11){ if(i%4===3) t='caliper'; else if(i%5===4) t='runner'; }
     list.push(t); } return list; }
 /* Entrada desde la tierra (bosque): la Sombra emerge del suelo junto al jugador */
 function dirtMound(x,z){ const gy=terrainH(x,z);
@@ -989,13 +1006,14 @@ function shoot(){ const now = performance.now()/1000, W = WEAPONS[G.cur];
     dir.x += rand(-W.spread,W.spread); dir.y += rand(-W.spread,W.spread); dir.z += rand(-W.spread,W.spread);
     dir.normalize();
     // auto-aim suave (10°): corrige hacia la Sombra más cercana al centro
+    const EL = (MP.active && !MP.host)? MP.foeList() : G.enemies;
     let best=null, bestAng=.18;
-    for(const e of G.enemies){ if(e.dead) continue;
+    for(const e of EL){ if(e.dead) continue;
       const to=new THREE.Vector3(e.x-origin.x, (e.gy||0)+1.1*e.scale-origin.y, e.z-origin.z);
       const ang=dir.angleTo(to.clone().normalize());
       if(ang<bestAng){ bestAng=ang; best=e; } }
     const hits=[];
-    for(const e of G.enemies){ if(e.dead) continue;
+    for(const e of EL){ if(e.dead) continue;
       const centers=[ {y:(e.gy||0)+1.62*e.scale, r:.30*e.scale, head:true}, {y:(e.gy||0)+.85*e.scale, r:.55*e.scale, head:false} ];
       let bestT=1e9, bestHead=false;
       for(const c of centers){ const oc=new THREE.Vector3(e.x-origin.x, c.y-origin.y, e.z-origin.z);
@@ -1008,7 +1026,8 @@ function shoot(){ const now = performance.now()/1000, W = WEAPONS[G.cur];
     const used = hits.slice(0, W.pierce?2:1);
     const end = used.length? used[used.length-1].pt : origin.clone().add(dir.clone().multiplyScalar(30));
     tracer(origin.clone().add(dir.clone().multiplyScalar(.6)), end, G.cur==='rifle'?0x9fd8ff:0xd8d8e0);
-    for(const h of used) damageEnemy(h.e, W.dmg*(h.head?1.6:1), h.pt); }
+    for(const h of used){ if(h.e.foe) MP.sendShot(h.e.foe, W.dmg*(h.head?1.6:1), h.pt);
+      else damageEnemy(h.e, W.dmg*(h.head?1.6:1), h.pt); } }
 }
 function damageEnemy(e,dmg,pt){ if(e.dead) return; e.hp-=dmg; AU.hit();
   burst(pt.x,pt.y,pt.z,0x8f0f1c, e.type==='guardian'?10:6, 1.6, 2.2);
@@ -1097,8 +1116,11 @@ function buildWeaponButtons(){ const w=$('weaps'); w.innerHTML='';
     if(!G.weapons[k]) return; const b=document.createElement('button'); b.textContent=l; b.dataset.w=k;
     if(G.cur===k) b.className='on'; b.addEventListener('click',()=>setWeapon(k)); w.appendChild(b); }); }
 
-function nearestInteract(){ let best=null, bd=2.7;
-  const dd=Math.hypot(P.x, P.z-12);
+function setDoor(open){ if(DOOR.open===open) return; DOOR.open=open; AU.creak();
+  if(open){ const i=colliders.indexOf(doorCol); if(i>=0) colliders.splice(i,1); }
+  else if(!colliders.includes(doorCol)) colliders.push(doorCol); }
+function nearestInteract(){ let best=null, bd=3.1;
+  const dd=Math.hypot(P.x, P.z-12.4);
   if(dd<bd){ bd=dd; best={ type:'door' }; }
   for(const p of pickups){ if(p.taken) continue; const d=Math.sqrt(dist2(P.x,P.z,p.x,p.z));
     if(d<bd){ bd=d; best={ type:'pickup', p }; } }
@@ -1107,19 +1129,23 @@ function nearestInteract(){ let best=null, bd=2.7;
   if(G.guardianDead && Math.sqrt(dist2(P.x,P.z,0,-8))<2.1) best={ type:'gem' };
   return best; }
 function interact(){ if(G.mode!=='play') return; const it=nearestInteract(); if(!it) return;
-  if(it.type==='door'){ DOOR.open=!DOOR.open; AU.creak();
-    if(DOOR.open){ const i=colliders.indexOf(doorCol); if(i>=0) colliders.splice(i,1); }
-    else if(!colliders.includes(doorCol)) colliders.push(doorCol);
+  if(it.type==='door'){ setDoor(!DOOR.open);
+    if(MP.active && !MP.host){ try{ Playroom.RPC.call('door',{open:DOOR.open}, Playroom.RPC.Mode.HOST); }catch(_){} }
     return; }
   if(it.type==='pickup'){ it.p.taken=true; scene.remove(it.p.mesh); scene.remove(it.p.light);
     if(it.p.ring) scene.remove(it.p.ring);
+    for(const o of pickups){ if(o!==it.p && o.kind===it.p.kind && !o.taken){ o.taken=true;
+      scene.remove(o.mesh); scene.remove(o.light); if(o.ring) scene.remove(o.ring); } }
     G.weapons[it.p.kind]=true; buildWeaponButtons(); setWeapon(it.p.kind); G.pts+=25;
     banner(it.p.kind==='shotgun'?'ESCOPETA DEL SIGILO':'RIFLE DE LUZ','La plata despierta en tus manos');
     if(it.p.kind==='shotgun') setTimeout(()=>Scares.jumpscare(), 350);
     AU.chime(); }
   else if(it.type==='note'){ it.n.read=true; G.pts+=50; it.n.mesh.material.color.set(0x8a8266);
     $('ntitle').textContent=it.n.t; $('ntext').textContent=it.n.s; $('note').style.display='flex'; G.mode='note'; }
-  else if(it.type==='gem'){ winGame(); }
+  else if(it.type==='gem'){ if(MP.active && !MP.host){
+      try{ Playroom.RPC.call('gem',{}, Playroom.RPC.Mode.HOST); }catch(_){}
+      banner('LA GEMA','El anfitrión sellará la victoria…'); }
+    else winGame(); }
   updateHUD(); }
 $('nclose').addEventListener('click', ()=>{ $('note').style.display='none'; if(G.mode==='note') G.mode='play'; });
 
@@ -1159,6 +1185,14 @@ function updateEnemies(dt){ const alive=[];
   for(const e of G.enemies){ if(e.dead){ e.deadT+=dt; e.mesh.position.y = (e.gy||0) - e.deadT*.9;
       e.mesh.rotation.x = e.deadT*.6; if(e.deadT<.7) alive.push(e); else scene.remove(e.mesh); continue; }
     alive.push(e);
+    // Objetivo: el jugador vivo más cercano (en co-op puede ser un compañero)
+    let TX=P.x, TZ=P.z, TLOC=true, TID=null, TYAW=P.yaw;
+    if(MP.active && MP.host){ let bd = P.dead? Infinity : (P.x-e.x)**2+(P.z-e.z)**2;
+      for(const pl of MP.players.values()){ if(pl.id===MP.me.id) continue;
+        const pos=pl.getState('pos'); if(!pos||pos.dead) continue;
+        const dd=(pos.x-e.x)**2+(pos.z-e.z)**2;
+        if(dd<bd){ bd=dd; TX=pos.x; TZ=pos.z; TLOC=false; TID=pl.id; TYAW=pos.yaw||0; } }
+      if(P.dead && TID===null){ TX=e.x; TZ=e.z; } }
     // Emergencia desde la tierra (bosque): sube del suelo entre polvo
     if(e.state==='emerge'){ e.emergeT+=dt; const k=clamp(e.emergeT/e.emergeDur,0,1);
       e.gy=terrainH(e.x,e.z);
@@ -1187,9 +1221,9 @@ function updateEnemies(dt){ const alive=[];
       continue; }
     // LURKER: acecha sumergido en el arroyo y vuelve a él si te alejas
     if(e.type==='lurker' && e.state!=='chase'){
-      const hd=Math.hypot(P.x-e.x, P.z-e.z);
+      const hd=Math.hypot(TX-e.x, TZ-e.z);
       if(e.state==='lurk'){ e.gy=CREEK.wy-1.32; e.mesh.position.set(e.x, e.gy, e.z);
-        e.mesh.rotation.y=Math.atan2(P.x-e.x, P.z-e.z);
+        e.mesh.rotation.y=Math.atan2(TX-e.x, TZ-e.z);
         if(hd<12){ e.state='chase'; AU.splash(); burst(e.x,CREEK.wy+.3,e.z,0x9fc2de,18,1.8,2.4); }
         continue; }
       const ldx=e.home.x-e.x, ldz=e.home.z-e.z, ldd=Math.hypot(ldx,ldz)||.001;
@@ -1197,13 +1231,13 @@ function updateEnemies(dt){ const alive=[];
       e.x+=ldx/ldd*1.9*dt; e.z+=ldz/ldd*1.9*dt; e.gy=terrainH(e.x,e.z); e.bobT+=dt*3;
       e.mesh.position.set(e.x, e.gy+Math.sin(e.bobT)*.04, e.z);
       e.mesh.rotation.y=Math.atan2(ldx,ldz); continue; }
-    const dx=P.x-e.x, dz=P.z-e.z, d=Math.hypot(dx,dz)||.001;
+    const dx=TX-e.x, dz=TZ-e.z, d=Math.hypot(dx,dz)||.001;
     // Si quedó en la zona contraria a la del jugador, se desvanece (no bloquea la oleada)
-    if(e.type!=='guardian' && !e.ambient && isInside(e.x,e.z)!==isInside(P.x,P.z)){ e.strayT+=dt;
+    if(e.type!=='guardian' && !e.ambient && isInside(e.x,e.z)!==isInside(TX,TZ)){ e.strayT+=dt;
       if(e.strayT>12){ burst(e.x,(e.gy||0)+1,e.z,0x444466,14,1.6,2); scene.remove(e.mesh); alive.pop(); continue; } }
     else e.strayT=0;
     let frozen=false;
-    if(e.type==='susurrante'){ const fwd={ x:-Math.sin(P.yaw), z:-Math.cos(P.yaw) };
+    if(e.type==='susurrante'){ const fwd={ x:-Math.sin(TYAW), z:-Math.cos(TYAW) };
       const ang=Math.acos(clamp((fwd.x*dx+fwd.z*dz)/d,-1,1)); if(ang<.5 && d<11) frozen=true; }
     // SCREAMER: grita, acelera a las demás y llama refuerzos
     if(e.type==='susurrante' && !frozen){ e.screamT-=dt;
@@ -1216,13 +1250,15 @@ function updateEnemies(dt){ const alive=[];
     // SPITTER: escupe ácido a distancia
     if(e.type==='spitter'){ e.spitT-=dt;
       if(!frozen && d>3.4 && d<14 && e.spitT<=0){ e.spitT=2.6; AU.spit();
-        const py=groundY(P.x,P.z)+1.25, sx=e.x, sy=(e.gy||0)+1.05*e.scale, sz=e.z, T=Math.max(d/11,.3);
+        const py=groundY(TX,TZ)+1.25, sx=e.x, sy=(e.gy||0)+1.05*e.scale, sz=e.z, T=Math.max(d/11,.3);
         const mm=new THREE.Mesh(new THREE.SphereGeometry(.09,7,6),
           new THREE.MeshBasicMaterial({ color:0x7dff5a }));
         mm.position.set(sx,sy,sz); scene.add(mm);
         G.projs.push({ x:sx, y:sy, z:sz, vx:dx/d*11, vy:(py-sy)/T+1.1, vz:dz/d*11, t:0, m:mm }); } }
     if(!frozen && d> (e.type==='guardian'?2:1.35)*e.scale*.9 ){
       let vx=dx/d*spd, vz=dz/d*spd;
+      if(e.type==='caliper'){ const zz=Math.sin(e.bobT*1.6)*.85;   // CALIPER: flanquea en zigzag
+        vx+=-dz/d*spd*zz*.6; vz+=dx/d*spd*zz*.6; }
       if(e.stuckT>.9){ const s=(e.stuckSide||1); vx+= -dz/d*spd*.9*s; vz+= dx/d*spd*.9*s; }
       const np=collide(e.x+vx*dt, e.z+vz*dt, .42*e.scale);
       const moved=Math.hypot(np.x-e.x, np.z-e.z);
@@ -1245,19 +1281,159 @@ function updateEnemies(dt){ const alive=[];
       if(sd>0 && sd<.8){ e.x+=sx/sd*dt*.7; e.z+=sz/sd*dt*.7; } } }
     // ataque cuerpo a cuerpo
     e.atkT-=dt;
-    if(d < 1.75*e.scale && e.atkT<=0){ e.atkT=.8; hurtPlayer(e.type==='guardian'?14:8); }
+    if(d < 1.75*e.scale && e.atkT<=0){ e.atkT=.8; const dm=e.type==='guardian'?14:8;
+      if(TLOC) hurtPlayer(dm); else MP.hitRemote(TID, dm); }
     // Guardián: pulso de niebla telegrafiado
     if(e.type==='guardian'){ if(e.mesh.userData.ring) e.mesh.userData.ring.rotation.z+=dt;
       e.pulseT-=dt;
       if(Math.abs(e.pulseT-1.5)<dt) AU.pulseCharge();
       if(e.pulseT<=0){ e.pulseT = e.hp<150?3.6:5;
         burst(e.x,.6,e.z,0x555577,22,3.4,1.4); AU.boom(); G.shake=Math.max(G.shake,.25);
-        if(Math.hypot(P.x-e.x,P.z-e.z)<4.4 && P.z<-3) hurtPlayer(10); }
+        if(Math.hypot(P.x-e.x,P.z-e.z)<4.4 && P.z<-3) hurtPlayer(10);
+        if(MP.active && MP.host){ for(const pl of MP.players.values()){ if(pl.id===MP.me.id) continue;
+          const pos=pl.getState('pos');
+          if(pos && !pos.dead && Math.hypot(pos.x-e.x,pos.z-e.z)<4.4 && pos.z<-3) MP.hitRemote(pl.id,10); } } }
       if(e.hp<350 && !e.twinsDone){ e.twinsDone=true; banner('LAS SOMBRAS GEMELOS','Deben caer casi a la vez');
         makeSombra(-2.4,-7,'normal',6); makeSombra(2.4,-7,'normal',6); } }
     if(e.type==='lurker' && d>22) e.state='return';
   }
   G.enemies = alive; }
+
+/* ---------------- MULTIJUGADOR CO-OP (Playroom) ----------------
+   El anfitrión simula el mundo; los invitados ven su réplica y disparan
+   contra ella. Sin servidor propio: la sala vive en el enlace (#r=…). */
+const MP = { active:false, host:true, me:null, players:new Map(), avatars:new Map(),
+  foes:new Map(), netSeq:0, sendT:0, foeT:0, hudT:0, endSeen:'', endSet:false,
+  finalLose:false, started:false, doorSent:false };
+const SIM = ()=> !MP.active || MP.host;
+MP.hitRemote = (id,dmg,acid)=>{ try{ Playroom.RPC.call('hit',{to:id,dmg,acid:acid?1:0}, Playroom.RPC.Mode.ALL); }catch(_){} };
+MP.foeList = ()=>{ const l=[]; for(const f of MP.foes.values())
+  l.push({ x:f.x, z:f.z, gy:f.mesh.position.y, scale:f.baseScale, dead:false, foe:f }); return l; };
+MP.sendShot = (foe,dmg,pt)=>{ AU.hit(); burst(pt.x,pt.y,pt.z,0x8f0f1c,6,1.6,2.2);
+  try{ Playroom.RPC.call('shoot',{ id:foe.id, dmg:Math.round(dmg) }, Playroom.RPC.Mode.HOST); }catch(_){} };
+MP.anyPlayerInChamber = ()=>{ for(const pl of MP.players.values()){ if(pl.id===MP.me.id) continue;
+  const pos=pl.getState('pos'); if(pos && pos.z<-3.6) return true; } return false; };
+MP.downed = ()=>{ P.dead=true; G.hp=0; AU.stopHeart(); AU.sting(.12);
+  document.exitPointerLock && document.exitPointerLock();
+  $('endtxt').textContent='Has caído… Tu equipo sigue en pie: si resisten, la niebla te devuelve en 12 s. Si caen todos, la casa gana.';
+  $('end').style.display='flex'; G.mode='over'; updateHUD();
+  setTimeout(()=>{ if(MP.active && P.dead && !MP.finalLose){
+    $('end').style.display='none'; P.dead=false; G.hp=50; P.x=2.5; P.z=46; P.yaw=0;
+    G.mode='play'; updateHUD(); banner('DE VUELTA','La niebla te escupe en la puerta de la casa'); } }, 12000); };
+function buildAvatar(profile){ const g=new THREE.Group();
+  const col = profile && profile.color ? profile.color.hex : 0xd4af37;
+  const cloak=new THREE.Mesh(new THREE.ConeGeometry(.36,1.15,8),
+    new THREE.MeshStandardMaterial({ color:0x14151c, roughness:.9 }));
+  cloak.position.y=.58; g.add(cloak);
+  const trim=new THREE.Mesh(new THREE.TorusGeometry(.37,.03,6,14),
+    new THREE.MeshStandardMaterial({ color:col, roughness:.4, metalness:.6 }));
+  trim.rotation.x=Math.PI/2; trim.position.y=.14; g.add(trim);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.17,10,8),
+    new THREE.MeshStandardMaterial({ color:0xc9a189, roughness:.7 }));
+  head.position.y=1.32; g.add(head);
+  const hood=new THREE.Mesh(new THREE.ConeGeometry(.24,.42,8),
+    new THREE.MeshStandardMaterial({ color:0x1c1d26, roughness:.85 }));
+  hood.position.y=1.52; g.add(hood);
+  const gun=new THREE.Mesh(new THREE.BoxGeometry(.07,.09,.5),
+    new THREE.MeshStandardMaterial({ color:0x2a2c33, metalness:.7, roughness:.4 }));
+  gun.position.set(.18,.95,-.3); g.add(gun);
+  const cv=document.createElement('canvas'); cv.width=256; cv.height=56;
+  const cx=cv.getContext('2d'); cx.font='bold 30px sans-serif'; cx.textAlign='center';
+  cx.fillStyle='#ffd977'; cx.shadowColor='#000'; cx.shadowBlur=6;
+  cx.fillText(((profile&&profile.name)||'Aliado').slice(0,14),128,38);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(cv), transparent:true }));
+  sp.scale.set(1.5,.33,1); sp.position.y=1.95; g.add(sp);
+  g.traverse(o=>{ o.castShadow=true; }); return g; }
+MP.applyFoes = (fs, dt)=>{ const seen=new Set();
+  for(const a of fs){ const id=a[0], type=a[1], x=a[2], z=a[3], y=a[4], hpPct=a[5], scale=a[7]||1;
+    seen.add(id);
+    let f=MP.foes.get(id);
+    if(!f){ const mesh = buildEnemyMesh(new THREE.Group(), type);
+      mesh.scale.setScalar(scale); mesh.position.set(x,y,z); scene.add(mesh);
+      f={ id, type, mesh, x, z, baseScale:scale, hpPct, bobT:Math.random()*6 }; MP.foes.set(id,f); }
+    const moved=Math.hypot(x-f.x, z-f.z);
+    f.x += (x-f.x)*Math.min(1,dt*9); f.z += (z-f.z)*Math.min(1,dt*9);
+    if(moved>.05) f.bobT += dt*6;
+    f.mesh.position.set(f.x, y + Math.sin(f.bobT)*.04, f.z);
+    if(moved>.02) f.mesh.rotation.y = Math.atan2(x-f.mesh.position.x, z-f.mesh.position.z);
+    const Pt=f.mesh.userData.parts;
+    if(Pt && moved>.05){ const sw=Math.sin(f.bobT*2.1)*.55;
+      Pt.armL.rotation.x=sw; Pt.armR.rotation.x=-sw;
+      Pt.legL.rotation.x=-sw*.85; Pt.legR.rotation.x=sw*.85; }
+    if(hpPct < f.hpPct){ f.hpPct=hpPct;
+      f.mesh.scale.setScalar(f.baseScale*1.13);
+      burst(f.x, y+1, f.z, 0x8f0f1c, 5, 1.4, 1.8); }
+    else { const s=f.mesh.scale.x + (f.baseScale - f.mesh.scale.x)*Math.min(1,dt*8);
+      f.mesh.scale.setScalar(s); } }
+  for(const [id,f] of [...MP.foes]){ if(!seen.has(id)){
+    burst(f.x, f.mesh.position.y+1, f.z, 0x8f0f1c, 18, 2.2, 2.6);
+    bloodPool(f.x, f.z, f.baseScale*rand(.7,1.1), isInside(f.x,f.z)?0:terrainH(f.x,f.z));
+    scene.remove(f.mesh); MP.foes.delete(id); AU.die(); } } };
+MP.tick = (dt)=>{ if(!MP.me) return;
+  MP.sendT-=dt;
+  if(MP.sendT<=0){ MP.sendT=.1;
+    try{ MP.me.setState('pos', { x:+P.x.toFixed(2), z:+P.z.toFixed(2), yaw:+P.yaw.toFixed(2),
+      hp:G.hp, dead:P.dead?1:0, cur:G.cur }, false); }catch(_){} }
+  for(const [id,pl] of MP.players){ if(id===MP.me.id) continue;
+    const pos=pl.getState('pos'); if(!pos) continue;
+    let av=MP.avatars.get(id);
+    if(!av){ av={ mesh:buildAvatar(pl.getProfile()), x:pos.x, z:pos.z };
+      MP.avatars.set(id,av); scene.add(av.mesh); }
+    av.x += (pos.x-av.x)*Math.min(1,dt*10); av.z += (pos.z-av.z)*Math.min(1,dt*10);
+    av.mesh.position.set(av.x, isInside(av.x,av.z)?0:terrainH(av.x,av.z), av.z);
+    av.mesh.rotation.y = pos.yaw||0; av.mesh.visible = !pos.dead; }
+  if(MP.host){
+    MP.foeT-=dt;
+    if(MP.foeT<=0){ MP.foeT=.12;
+      const fs=[]; for(const e of G.enemies){ if(e.dead) continue;
+        fs.push([e.netId, e.type, +e.x.toFixed(2), +e.z.toFixed(2), +e.mesh.position.y.toFixed(2),
+          Math.max(0,Math.ceil(e.hp/e.maxhp*100)), e.state==='lurk'?1:0, e.scale]); }
+      try{ Playroom.setState('foes', fs, false); }catch(_){} }
+    MP.hudT-=dt;
+    if(MP.hudT<=0){ MP.hudT=.5;
+      try{ Playroom.setState('hud', { w:G.wave, ws:G.waveState, pts:G.pts, kills:G.kills,
+        left:G.enemies.filter(e=>!e.dead&&!e.ambient).length + G.spawnQueue.length,
+        gd:G.guardianDead?1:0, door:DOOR.open?1:0 }, true); }catch(_){} }
+    if(MP.started && !MP.endSet){ let aliveTeam = !P.dead;
+      if(!aliveTeam){ for(const pl of MP.players.values()){ if(pl.id===MP.me.id) continue;
+        const pos=pl.getState('pos'); if(pos && !pos.dead){ aliveTeam=true; break; } } }
+      if(!aliveTeam && MP.players.size>1){ MP.endSet=true; MP.finalLose=true;
+        try{ Playroom.setState('end','lose',true); }catch(_){} gameOver(); } }
+  } else {
+    let fs=null, hud=null, end=null;
+    try{ fs=Playroom.getState('foes'); hud=Playroom.getState('hud'); end=Playroom.getState('end'); }catch(_){}
+    if(fs) MP.applyFoes(fs, dt);
+    if(hud){ G.wave=hud.w; if(hud.ws!=='mpwait') G.waveState=hud.ws;
+      G.pts=hud.pts; G.kills=hud.kills; G.guardianDead=!!hud.gd;
+      if(!!DOOR.open !== !!hud.door) setDoor(!!hud.door);
+      updateHUD();
+      if(hud.ws!=='boss') $('eval').textContent='Sombras: '+hud.left; }
+    if(end && end!==MP.endSeen){ MP.endSeen=end;
+      if(end==='win') winGame();
+      else if(end==='lose'){ MP.finalLose=true;
+        if(!P.dead) gameOver();
+        else $('endtxt').textContent='La casa ha ganado. Todo el equipo ha caído en la niebla.'; } } } };
+async function startCoop(){ const msg=$('mpmsg');
+  if(!window.Playroom){ msg.textContent='⚠️ El servicio multijugador no cargó. Revisa tu conexión y recarga la página.'; return; }
+  msg.textContent='Abriendo la sala… Pon tu nombre, espera a tu equipo y toca LAUNCH.';
+  try{ await Playroom.insertCoin(MP.testOpts || { maxPlayersPerRoom:4 });
+    MP.active=true; MP.host=Playroom.isHost(); MP.me=Playroom.myPlayer(); MP.started=true;
+    MP.players.set(MP.me.id, MP.me);
+    Playroom.onPlayerJoin((pl)=>{ MP.players.set(pl.id, pl);
+      pl.onQuit(()=>{ MP.players.delete(pl.id);
+        const av=MP.avatars.get(pl.id);
+        if(av){ scene.remove(av.mesh); MP.avatars.delete(pl.id); } }); });
+    Playroom.RPC.register('shoot', async (data)=>{
+      const e=G.enemies.find(x=>x.netId===data.id && !x.dead);
+      if(e){ damageEnemy(e, data.dmg, new THREE.Vector3(e.x,(e.gy||0)+1,e.z)); return { k:e.dead?1:0 }; }
+      return { k:0 }; });
+    Playroom.RPC.register('hit', async (data)=>{
+      if(MP.me && data.to===MP.me.id){ hurtPlayer(data.dmg); if(data.acid) G.acidO=1; } return {}; });
+    Playroom.RPC.register('door', async (data)=>{ if(MP.host) setDoor(!!data.open); return {}; });
+    Playroom.RPC.register('gem', async ()=>{ if(MP.host && G.guardianDead) winGame(); return {}; });
+    msg.textContent = MP.host? 'Sala creada: comparte el enlace de esta página con tu equipo.' : '¡Dentro de la sala!';
+    $('play').click();
+  }catch(err){ msg.textContent='⚠️ No se pudo abrir la sala ('+((err&&err.message)||'error')+'). Tócalo otra vez.'; } }
 
 /* ---------------- BUCLE PRINCIPAL ---------------- */
 const clock = new THREE.Clock();
@@ -1279,7 +1455,8 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
       const wx=(mx*cos - mz*sin), wz=(-mx*sin - mz*cos);
       const np=collide(P.x+wx*sp*dt, P.z+wz*sp*dt, .38); P.x=np.x; P.z=np.z;
       if(firing) shoot();
-      // oleadas
+      // oleadas (en co-op solo simula el anfitrión)
+      if(SIM()){
       if(G.waveState==='combat'){ G.spawnT-=dt;
         const aliveN=G.enemies.filter(e=>!e.dead && !e.ambient).length;
         if(G.spawnQueue.length && G.spawnT<=0 && aliveN < WAVES[G.wave].at){ G.spawnT=1.5;
@@ -1296,8 +1473,9 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
         const anyWave=G.enemies.some(e=>!e.ambient);
         if(!G.spawnQueue.length && aliveN===0 && !anyWave) clearWave(); }
       else if(G.waveState==='rest'){ G.restT-=dt; if(G.restT<=0) startWave(G.wave+1); }
-      else if(G.waveState==='wait6' && P.z<-3.6 && !G.guardianSpawned){ G.guardianSpawned=true; startBoss(); }
-      updateEnemies(dt);
+      else if(G.waveState==='wait6' && (P.z<-3.6 || (MP.active && MP.anyPlayerInChamber())) && !G.guardianSpawned){ G.guardianSpawned=true; startBoss(); }
+      }
+      if(SIM()) updateEnemies(dt);
       // Proyectiles de ácido del Spitter
       for(let i=G.projs.length-1;i>=0;i--){ const pr=G.projs[i]; pr.t+=dt;
         pr.vy-=3.5*dt; pr.x+=pr.vx*dt; pr.y+=pr.vy*dt; pr.z+=pr.vz*dt;
@@ -1307,9 +1485,15 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
           burst(pr.x,pr.y,pr.z,0x7dff5a,10,1.4,1.4); scene.remove(pr.m); G.projs.splice(i,1); continue; }
         if(pr.y<groundY(pr.x,pr.z)+.05 || pr.t>4){ burst(pr.x,pr.y,pr.z,0x7dff5a,6,1,1);
           scene.remove(pr.m); G.projs.splice(i,1); } }
+      // El ácido también puede alcanzar a los compañeros (lo resuelve el anfitrión)
+      if(MP.active && MP.host){ for(let i=G.projs.length-1;i>=0;i--){ const pr=G.projs[i];
+        for(const pl of MP.players.values()){ if(pl.id===MP.me.id) continue; const pos=pl.getState('pos');
+          if(pos && !pos.dead && Math.hypot(pr.x-pos.x,pr.z-pos.z)<.7 && Math.abs(pr.y-(groundY(pos.x,pos.z)+1.25))<1){
+            MP.hitRemote(pl.id,7,1); burst(pr.x,pr.y,pr.z,0x7dff5a,10,1.4,1.4);
+            scene.remove(pr.m); G.projs.splice(i,1); break; } } } }
       // El Lurker reaparece en el arroyo pasado un rato
-      G.lurkT-=dt;
-      if(G.enemies.filter(e=>e.type==='lurker' && !e.dead).length<2 && G.lurkT<=0){ G.lurkT=45; spawnLurker(); }
+      if(SIM()){ G.lurkT-=dt;
+        if(G.enemies.filter(e=>e.type==='lurker' && !e.dead).length<2 && G.lurkT<=0){ G.lurkT=45; spawnLurker(); } }
       // sustos por zona
       if(!Scares.silhouetteDone && P.x<-5.4 && P.z<3 && P.z>-1) Scares.silhouette();
       // interacción disponible
@@ -1331,6 +1515,10 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
       if(t.t>t.life){ scene.remove(t.l); tracers.splice(i,1); } }
     for(let i=G.fx.length-1;i>=0;i--){ if(!G.fx[i].fn(dt)) G.fx.splice(i,1); }
     // Puerta, agua, luciérnagas y retroceso del arma
+    if(!DOOR.open && Math.hypot(P.x, P.z-12.9)<1.9){ setDoor(true);   // la puerta se abre sola al acercarte
+      if(MP.active && !MP.host && !MP.doorSent){ MP.doorSent=true;
+        try{ Playroom.RPC.call('door',{open:true}, Playroom.RPC.Mode.HOST); }catch(_){}
+        setTimeout(()=>{ MP.doorSent=false; }, 2000); } }
     DOOR.t += ((DOOR.open?1:0)-DOOR.t)*Math.min(1,dt*5);
     doorPivot.rotation.y = -DOOR.t*1.85;
     waterMat.map.offset.x = elapsed*.02;
@@ -1354,7 +1542,7 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
     gemLight.intensity=.8+Math.sin(elapsed*2.3)*.25;
     candle.intensity=.42+Math.sin(elapsed*11)*.05+Math.sin(elapsed*23.7)*.04;
     for(const p of pickups){ if(p.taken) continue; p.mesh.rotation.y+=dt*1.4;
-      p.mesh.position.y=.85+Math.sin(elapsed*2+p.x)*.07; }
+      p.mesh.position.y=(p.baseY||.85)+Math.sin(elapsed*2+p.x)*.07; }
     for(const n of NOTES){ if(!n.read) n.mesh.rotation.y+=dt*.6; }
     scene.traverse(o=>{ if(o.name==='flame'){ const s=.8+Math.sin(elapsed*13+o.position.x)*.3; o.scale.set(s,s,s); } });
     dust.rotation.y = elapsed*.004; dust.position.y = Math.sin(elapsed*.22)*.05;
@@ -1364,18 +1552,23 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
     if(G.acidO>0){ G.acidO=Math.max(0,G.acidO-dt*.8); }
     $('acid').style.opacity = G.acidO*.85;
   }
+  if(MP.active) MP.tick(dt);
   renderer.render(scene, camera); }
 
 /* ---------------- FIN DE PARTIDA ---------------- */
 function fmtTime(s){ return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
-function gameOver(){ if(P.dead) return; P.dead=true; G.mode='over'; AU.stopHeart(); AU.sting(.12);
+function gameOver(){ if(P.dead) return;
+  if(MP.active && !MP.finalLose){ MP.downed(); return; }
+  P.dead=true; G.mode='over'; AU.stopHeart(); AU.sting(.12);
   document.exitPointerLock && document.exitPointerLock();
   $('endtxt').textContent = `Caíste en la oleada ${Math.max(1,G.wave)} · ${G.pts} puntos · ${G.kills} Sombras devueltas a la niebla · ${fmtTime(elapsed)} en la casa.`;
   const end=$('end'); end.style.display='flex';
   for(let i=0;i<16;i++){ const d=document.createElement('div'); d.className='drip';
     d.style.left=rand(2,97)+'vw'; d.style.height=rand(6,20)+'vh'; d.style.animationDuration=rand(1.6,3.6)+'s';
     d.style.animationDelay=rand(0,1.6)+'s'; end.appendChild(d); } }
-function winGame(){ if(G.mode!=='play') return; G.mode='win'; AU.chime(); AU.stopHeart();
+function winGame(){ if(G.mode!=='play') return;
+  if(MP.active && MP.host){ try{ Playroom.setState('end','win',true); }catch(_){} }
+  G.mode='win'; AU.chime(); AU.stopHeart();
   document.exitPointerLock && document.exitPointerLock();
   $('wintxt').textContent = `Puntos: ${G.pts} · Sombras caídas: ${G.kills} · Tiempo: ${fmtTime(elapsed)}. La casa vuelve a dormir… por ahora.`;
   $('win').style.display='flex'; }
@@ -1388,7 +1581,7 @@ function resetGame(){ G.hp=100; G.pts=0; G.kills=0; G.wave=0; G.bloodO=0; G.acid
   for(const e of G.enemies) scene.remove(e.mesh); G.enemies=[];
   for(const pr of G.projs) scene.remove(pr.m); G.projs=[];
   G.screams=0; G.lurkT=30;
-  spawnLurker(); spawnLurker();
+  if(SIM()){ spawnLurker(); spawnLurker(); }
   setWeapon('pistol');
   updateHUD(); buildWeaponButtons(); }
 $('play').addEventListener('click', ()=>{ AU.init(); AU.ctx.resume && AU.ctx.resume();
@@ -1396,9 +1589,10 @@ $('play').addEventListener('click', ()=>{ AU.init(); AU.ctx.resume && AU.ctx.res
     if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
     if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }
   $('start').style.display='none'; $('hud').style.display='block'; G.mode='play';
-  resetGame(); startWave(1);
+  resetGame(); if(SIM()) startWave(1); else G.waveState='mpwait';
   const mu=$('musica'); if(mu){ mu.volume=.45; mu.play().catch(()=>{}); }
   const am=$('ambiente'); if(am){ am.volume=.3; am.play().catch(()=>{}); } });
+$('coop').addEventListener('click', ()=>{ AU.init(); AU.ctx.resume && AU.ctx.resume(); startCoop(); });
 $('retry').addEventListener('click', ()=>location.reload());
 $('again').addEventListener('click', ()=>location.reload());
 /* QC3: el bosque — emergencias desde la tierra y el Spitter, mirando a la casa.
@@ -1469,6 +1663,39 @@ if(new URLSearchParams(location.search).get('qc')==='8'){
     P.x=2.5; P.z=46; P.yaw=.1; P.pitch=-.03;
     setInterval(()=>{ document.title='QC8 drawcalls='+renderer.info.render.calls; },500);
   }, 600); });
+}
+if(new URLSearchParams(location.search).get('qc')==='9'){
+  addEventListener('load', ()=>{ setTimeout(()=>{ $('play').click();
+    G.spawnQueue.length=0; G.waveState='rest'; G.restT=9999;
+    P.x=0.4; P.z=14.3;   // a 1.4 m de la puerta: debe abrirse sola, sin tocar nada
+    setTimeout(()=>{ document.title='QC9 puerta='+(DOOR.open?'ABIERTA':'CERRADA')+
+      ' colision='+(colliders.includes(doorCol)?'PUESTA':'FUERA')+
+      ' recogibles='+pickups.map(p=>p.kind+'@'+p.x+','+p.z).join(' ');
+      P.x=4.1; P.z=33.8; P.yaw=-.5; P.pitch=-.02;   // vista del rifle del camino
+    }, 1500);
+  }, 600); });
+}
+if(new URLSearchParams(location.search).get('qc')==='10'){
+  addEventListener('load', ()=>{ setTimeout(()=>{ $('play').click();
+    G.spawnQueue.length=0; G.waveState='rest'; G.restT=9999;
+    const z1=makeSombra(3.5,42.2,'caliper',2); z1.gy=terrainH(3.5,42.2); z1.mesh.position.y=z1.gy;
+    const z2=makeSombra(6.3,41,'normal',2); z2.gy=terrainH(6.3,41); z2.mesh.position.y=z2.gy;
+    P.x=2.5; P.z=46; P.yaw=.1; P.pitch=-.02;
+    setInterval(()=>{ document.title='QC10 oleada5='+spawnForWave(5).join(','); },500);
+  }, 600); });
+}
+/* Gancho de prueba co-op (?mp=1&room=CODIGO): entra sin lobby a una sala
+   fija y reporta el estado de red en el título (para verificación). */
+if(new URLSearchParams(location.search).get('mp')==='1'){
+  addEventListener('load', ()=>{ setTimeout(()=>{
+    MP.testOpts = { skipLobby:true, maxPlayersPerRoom:4,
+      roomCode:(new URLSearchParams(location.search).get('room')||'GEMA0001') };
+    startCoop();
+    setInterval(()=>{ document.title='MPTEST host='+MP.host+' iniciado='+MP.started+
+      ' jugadores='+MP.players.size+' avatares='+MP.avatars.size+
+      ' enemigos='+(MP.host? G.enemies.filter(e=>!e.dead).length : MP.foes.size)+
+      ' oleada='+G.wave+' estado='+G.waveState+' yo=('+P.x.toFixed(1)+','+P.z.toFixed(1)+')'; }, 1000);
+  }, 800); });
 }
 </script>
 </body>
