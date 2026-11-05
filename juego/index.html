@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- La Gema Prohibida — ARONYX. Piezas de HUD adaptadas de «Claude of Duty» (MIT, Copyright (c) 2026 mshumer): ver THIRD_PARTY_LICENSES.md en el proyecto. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ARONYX: La Gema Prohibida</title>
@@ -20,6 +21,39 @@
   .warn { margin-top:18px; color:#7d2a2a; font-size:13px; letter-spacing:2px; }
   #hud { position:fixed; inset:0; pointer-events:none; z-index:20; display:none; }
   #cross { position:absolute; left:50%; top:50%; width:6px; height:6px; margin:-3px; border-radius:50%; background:rgba(240,220,160,.9); box-shadow:0 0 6px rgba(0,0,0,.9); }
+  /* Tanda 1 «Feedback CoD» (adaptado de Claude of Duty, MIT) */
+  #compass { position:absolute; left:50%; top:10px; width:340px; height:28px; margin-left:-170px; overflow:hidden; background:linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.16)); border:1px solid rgba(216,198,144,.25); border-radius:4px; -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent); mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent); }
+  #cstrip { position:absolute; top:0; left:0; height:100%; will-change:transform; }
+  #cstrip .tk { position:absolute; top:3px; width:1px; height:7px; background:rgba(240,220,160,.5); }
+  #cstrip .tk.maj { height:11px; background:rgba(240,220,160,.9); }
+  #cstrip .cl { position:absolute; top:12px; transform:translateX(-50%); font-size:10.5px; letter-spacing:1px; color:#e9cf8a; }
+  #ccaret { position:absolute; left:50%; top:0; width:2px; height:8px; margin-left:-1px; background:#ffcf5e; box-shadow:0 0 5px rgba(255,207,94,.8); }
+  #chouse { position:absolute; top:0; transform:translateX(-50%); color:#ffd968; font-size:11px; text-shadow:0 0 6px #000; text-align:center; line-height:1.05; display:none; }
+  #chouse small { display:block; font-size:7px; letter-spacing:1px; color:#ffe9a8; }
+  #killfeed { position:absolute; right:14px; top:88px; text-align:right; font-size:13.5px; color:#e8dcc0; text-shadow:0 1px 3px #000; }
+  #killfeed div { margin-top:3px; animation:kfin .18s ease-out; }
+  #killfeed div.out { transition:opacity .6s; opacity:0; }
+  @keyframes kfin { from { transform:translateX(14px); opacity:0; } }
+  #crosshair { position:absolute; left:50%; top:50%; width:0; height:0; }
+  #crosshair .ca { position:absolute; background:rgba(240,220,160,.92); box-shadow:0 0 4px rgba(0,0,0,.9); }
+  #caT { width:2px; height:8px; left:-1px; top:-9px; } #caB { width:2px; height:8px; left:-1px; top:1px; }
+  #caL { width:8px; height:2px; top:-1px; left:-9px; } #caR { width:8px; height:2px; top:-1px; left:1px; }
+  #hitmark { position:absolute; left:50%; top:50%; width:46px; height:46px; margin:-23px; opacity:0; pointer-events:none; }
+  #hitmark i { position:absolute; width:11px; height:2.4px; background:#f6fafc; box-shadow:0 0 3px rgba(0,0,0,.85); }
+  #hitmark i:nth-child(1){ left:3px; top:11px; transform:rotate(45deg); }
+  #hitmark i:nth-child(2){ left:32px; top:11px; transform:rotate(-45deg); }
+  #hitmark i:nth-child(3){ left:3px; top:32px; transform:rotate(-45deg); }
+  #hitmark i:nth-child(4){ left:32px; top:32px; transform:rotate(45deg); }
+  #hitmark.head i { background:#ffc247; }
+  #hitmark.kill i { background:#ff4433; height:3px; }
+  #hitmark.show { animation:hm .3s ease-out; }
+  #hitmark.show.kill { animation-duration:.5s; }
+  @keyframes hm { 0%{opacity:1; transform:scale(1.28)} 25%{opacity:1; transform:scale(1)} 100%{opacity:0; transform:scale(.95)} }
+  #dmgarc { position:absolute; left:50%; top:50%; width:150px; height:150px; margin:-75px; border-radius:50%; border:5px solid transparent; border-top-color:rgba(255,52,40,.85); opacity:0; filter:drop-shadow(0 0 6px rgba(255,0,0,.45)); pointer-events:none; }
+  #dmgarc.show { animation:darc .85s ease-out; }
+  @keyframes darc { 0%{opacity:1} 100%{opacity:0} }
+  #reloadbar { position:absolute; left:50%; top:calc(50% + 36px); width:120px; height:4px; margin-left:-60px; background:rgba(0,0,0,.5); border:1px solid rgba(216,198,144,.35); border-radius:2px; display:none; }
+  #reloadfill { height:100%; width:0%; background:linear-gradient(90deg,#a8853c,#ffd968); }
   #stats { position:absolute; left:14px; bottom:14px; color:#e6d9ae; text-shadow:0 1px 3px #000; }
   #hpwrap { width:min(240px, 42vw); height:14px; border:1px solid #8a6d34; background:rgba(0,0,0,.55); }
   #hp { height:100%; width:100%; background:linear-gradient(90deg,#7d1420,#c22333); transition:width .15s; }
@@ -91,6 +125,12 @@
 
 <div id="hud">
   <div id="cross"></div>
+  <div id="crosshair"><i class="ca" id="caT"></i><i class="ca" id="caB"></i><i class="ca" id="caL"></i><i class="ca" id="caR"></i></div>
+  <div id="hitmark"><i></i><i></i><i></i><i></i></div>
+  <div id="dmgarc"></div>
+  <div id="reloadbar"><div id="reloadfill"></div></div>
+  <div id="compass"><div id="cstrip"></div><div id="ccaret"></div><div id="chouse">◆<small>CASA</small></div></div>
+  <div id="killfeed"></div>
   <div id="wave"><div class="val" id="wval">OLEADA 1</div><div class="lbl" id="eval">Sombras: 0</div></div>
   <div id="stats">
     <div id="hpwrap"><div id="hp"></div></div>
@@ -1097,7 +1137,7 @@ function shoot(){ const now = performance.now()/1000, W = WEAPONS[G.cur];
     if(A.res>0) startReload();
     else banner('¡SIN MUNICIÓN!','Busca cajas de balas por la casa y el bosque 📦');
     return; }
-  A.mag--; P.lastShot = now;
+  A.mag--; P.lastShot = now; HUDX.kick=Math.min(15, HUDX.kick+(G.cur==='shotgun'?13:6));
   AU.shot(G.cur); flash.visible=true; setTimeout(()=>flash.visible=false,45);
   updateHUD();
   if(A.mag===0 && A.res>0) setTimeout(()=>{ if(!G.reloading && G.ammo[G.cur].mag===0) startReload(); }, 420);
@@ -1129,18 +1169,21 @@ function shoot(){ const now = performance.now()/1000, W = WEAPONS[G.cur];
     const end = used.length? used[used.length-1].pt : origin.clone().add(dir.clone().multiplyScalar(30));
     tracer(origin.clone().add(dir.clone().multiplyScalar(.6)), end, G.cur==='rifle'?0x9fd8ff:0xd8d8e0);
     for(const h of used){ if(h.e.foe) MP.sendShot(h.e.foe, W.dmg*(h.head?1.6:1), h.pt);
-      else damageEnemy(h.e, W.dmg*(h.head?1.6:1), h.pt); } }
+      else damageEnemy(h.e, W.dmg*(h.head?1.6:1), h.pt, h.head); } }
 }
-function damageEnemy(e,dmg,pt){ if(e.dead) return; e.hp-=dmg; AU.hit();
+function damageEnemy(e,dmg,pt,head,fb){ if(e.dead) return; e.hp-=dmg; AU.hit();
+  if(fb!==false) showHitmark(head?'head':null);
   burst(pt.x,pt.y,pt.z,0x8f0f1c, e.type==='guardian'?10:6, 1.6, 2.2);
   if(e.hp<=0){ e.dead=true; e.deadT=0; G.kills++; G.pts+= e.type==='guardian'?500 : e.type==='pesada'?250 : 100;
+    showHitmark('kill'); addKillfeed((ENEMY_NAMES[e.type]||'Sombra')+' eliminado');
     AU.die(); burst(e.x,1,e.z,0x8f0f1c,26,2.6,3); burst(e.x,1.2,e.z,0x1a1a26,16,2,2.4);
     bloodPool(e.x,e.z, e.scale*rand(.7,1.1), e.gy||0);
     if(e.type==='guardian'){ G.guardianDead=true; G.waveState='done'; AU.chime();
       burst(e.x,1.6,e.z,0xd4af37,40,3,3.4);
       banner('EL GUARDIÁN HA CAÍDO','Toca la Gema, valiente'); }
     updateHUD(); } }
-function hurtPlayer(d){ if(G.mode!=='play'||P.dead) return; G.hp-=d; AU.hurt(); G.bloodO=1; G.shake=Math.min(.5,G.shake+.22);
+function hurtPlayer(d,sx,sz){ if(G.mode!=='play'||P.dead) return; G.hp-=d; AU.hurt(); G.bloodO=1; G.shake=Math.min(.5,G.shake+.22);
+  if(sx!==undefined) showDmgDir(sx,sz);
   if(G.hp<=35) AU.heart(); if(G.hp<=0){ G.hp=0; gameOver(); } updateHUD(); }
 
 /* ---------------- SUSTOS GUIONIZADOS ---------------- */
@@ -1269,6 +1312,27 @@ G.guardianDead=false; G.waveState='idle'; G.spawnQueue=[]; G.spawnT=0; G.restT=0
 function banner(txt, sub){ const b=$('banner');
   b.innerHTML = txt + (sub?`<small>${sub}</small>`:''); b.style.opacity=1;
   clearTimeout(b._t); b._t=setTimeout(()=>b.style.opacity=0, 2900); }
+/* ---- Tanda 1 «Feedback CoD»: hitmarkers, killfeed, brújula, daño direccional
+   (técnicas adaptadas de «Claude of Duty», MIT — Copyright (c) 2026 mshumer) ---- */
+const ENEMY_NAMES = { shambler:'Shambler', runner:'Corredor', screamer:'Gritón', pesada:'Bruto',
+  spitter:'Escupidor', lurker:'Acechador', caliper:'Caliper', guardian:'EL GUARDIÁN' };
+const HUDX = { spread:6, kick:0, px:0, pz:0 };
+function showHitmark(kind){ const h=$('hitmark'); h.className=''; void h.offsetWidth;
+  h.className='show'+(kind==='kill'?' kill':kind==='head'?' head':''); }
+function addKillfeed(txt){ const kf=$('killfeed'); const d=document.createElement('div');
+  d.textContent='☠ '+txt; kf.prepend(d);
+  setTimeout(()=>{ d.classList.add('out'); setTimeout(()=>d.remove(), 700); }, 4200);
+  while(kf.children.length>5) kf.lastChild.remove(); }
+function showDmgDir(sx,sz){ const rel0=Math.atan2(sx-P.x, -(sz-P.z)) + P.yaw;
+  let rel=rel0; while(rel>Math.PI)rel-=2*Math.PI; while(rel<-Math.PI)rel+=2*Math.PI;
+  const a=$('dmgarc'); a.style.transform=`rotate(${(rel*180/Math.PI).toFixed(0)}deg)`;
+  a.classList.remove('show'); void a.offsetWidth; a.classList.add('show'); }
+{ const strip=$('cstrip'); const CARD={0:'N',45:'NE',90:'E',135:'SE',180:'S',225:'SO',270:'O',315:'NO'};
+  for(let a=0;a<720;a+=15){ const t=document.createElement('div');
+    t.className='tk'+(a%45===0?' maj':''); t.style.left=(a*2.8333)+'px'; strip.appendChild(t);
+    const c=CARD[a%360]; if(c){ const l=document.createElement('div'); l.className='cl';
+      l.textContent=c; l.style.left=(a*2.8333)+'px'; strip.appendChild(l); } } }
+
 function updateHUD(){ $('hp').style.width = clamp(G.hp,0,100)+'%';
   $('pval').textContent = G.pts;
   { const A=G.ammo[G.cur], W=WEAPONS[G.cur];
@@ -1402,14 +1466,14 @@ function updateEnemies(dt){ const alive=[];
     // ataque cuerpo a cuerpo
     e.atkT-=dt;
     if(d < 1.75*e.scale && e.atkT<=0){ e.atkT=.8; const dm=e.type==='guardian'?14:8;
-      if(TLOC) hurtPlayer(dm); else MP.hitRemote(TID, dm); }
+      if(TLOC) hurtPlayer(dm, e.x, e.z); else MP.hitRemote(TID, dm); }
     // Guardián: pulso de niebla telegrafiado
     if(e.type==='guardian'){ if(e.mesh.userData.ring) e.mesh.userData.ring.rotation.z+=dt;
       e.pulseT-=dt;
       if(Math.abs(e.pulseT-1.5)<dt) AU.pulseCharge();
       if(e.pulseT<=0){ e.pulseT = e.hp<150?3.6:5;
         burst(e.x,.6,e.z,0x555577,22,3.4,1.4); AU.boom(); G.shake=Math.max(G.shake,.25);
-        if(Math.hypot(P.x-e.x,P.z-e.z)<4.4 && P.z<-3) hurtPlayer(10);
+        if(Math.hypot(P.x-e.x,P.z-e.z)<4.4 && P.z<-3) hurtPlayer(10, e.x, e.z);
         if(MP.active && MP.host){ for(const pl of MP.players.values()){ if(pl.id===MP.me.id) continue;
           const pos=pl.getState('pos');
           if(pos && !pos.dead && Math.hypot(pos.x-e.x,pos.z-e.z)<4.4 && pos.z<-3) MP.hitRemote(pl.id,10); } } }
@@ -1547,7 +1611,7 @@ async function startCoop(){ const msg=$('mpmsg');
         if(av){ scene.remove(av.mesh); MP.avatars.delete(pl.id); } }); });
     Playroom.RPC.register('shoot', async (data)=>{
       const e=G.enemies.find(x=>x.netId===data.id && !x.dead);
-      if(e){ damageEnemy(e, data.dmg, new THREE.Vector3(e.x,(e.gy||0)+1,e.z)); return { k:e.dead?1:0 }; }
+      if(e){ damageEnemy(e, data.dmg, new THREE.Vector3(e.x,(e.gy||0)+1,e.z), false, false); return { k:e.dead?1:0 }; }
       return { k:0 }; });
     Playroom.RPC.register('hit', async (data)=>{
       if(MP.me && data.to===MP.me.id){ hurtPlayer(data.dmg); if(data.acid) G.acidO=1; } return {}; });
@@ -1649,6 +1713,26 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
       if(G.mode==='play' && dist2(P.x,P.z,b.x,b.z)<1.6){ const BA=G.ammo[b.kind], BW=WEAPONS[b.kind];
         if(BA.res<BW.maxRes){ BA.res=Math.min(BW.maxRes, BA.res+BW.box); b.taken=true; b.g.visible=false;
           banner('+ '+BW.box+' BALAS', BW.name); AU.pick(); updateHUD(); } } }
+    { // Tanda 1: mira dinámica con muelle, brújula y barra de recarga
+      const spd=Math.hypot(P.x-HUDX.px, P.z-HUDX.pz)/Math.max(dt,.001); HUDX.px=P.x; HUDX.pz=P.z;
+      HUDX.kick*=Math.exp(-8*dt);
+      const tgt=6+(spd>.4?6:0)+HUDX.kick;
+      HUDX.spread+=(tgt-HUDX.spread)*Math.min(1,dt*16);
+      const g=HUDX.spread.toFixed(1);
+      $('caT').style.transform=`translateY(${-g}px)`; $('caB').style.transform=`translateY(${g}px)`;
+      $('caL').style.transform=`translateX(${-g}px)`; $('caR').style.transform=`translateX(${g}px)`;
+      const hd=(((-P.yaw*180/Math.PI)%360)+360)%360;
+      $('cstrip').style.transform=`translateX(${(170-(hd+360)*2.8333).toFixed(1)}px)`;
+      const b=Math.atan2(0-P.x, -(12.9-P.z))*180/Math.PI;
+      let dl=b-hd; while(dl>180)dl-=360; while(dl<-180)dl+=360;
+      const ch=$('chouse');
+      if(Math.abs(dl)<=60){ ch.style.display='block'; ch.style.left=(170+dl*2.8333)+'px'; }
+      else ch.style.display='none';
+      if(G.reloading){ const W=WEAPONS[G.cur];
+        const pr=1-(G.reloadEnd-performance.now()/1000)/W.reloadT;
+        $('reloadbar').style.display='block';
+        $('reloadfill').style.width=(clamp(pr,0,1)*100).toFixed(0)+'%'; }
+      else $('reloadbar').style.display='none'; }
     waterMat.map.offset.x = elapsed*.02;
     flies.rotation.y = elapsed*.006;
     G.kick = Math.max(0, G.kick-dt*7);
@@ -1873,6 +1957,25 @@ if(new URLSearchParams(location.search).get('qc')==='14'){
       const mus=($('musica').src||'').slice(0,10), amb=($('ambiente').src||'').slice(0,10);
       document.title='QC14 bufs='+ks.length+' '+durs+' musica='+mus+' ambiente='+amb;
     }, 1500);
+  }, 700); });
+}
+/* QC15: Tanda 1 «Feedback CoD» — hitmarker, killfeed, brújula, daño direccional, recarga. */
+if(new URLSearchParams(location.search).get('qc')==='15'){
+  addEventListener('load', ()=>{ setTimeout(()=>{ $('play').click();
+    G.hp=100000; G.spawnQueue.length=0;
+    const ticks=document.querySelectorAll('#cstrip .tk').length;
+    const foe=G.enemies[0] || makeSombra('shambler', P.x, P.z-6, 1);
+    if(!G.enemies.includes(foe)) G.enemies.push(foe);
+    damageEnemy(foe, 99999, new THREE.Vector3(foe.x,1,foe.z), false);
+    const hm=$('hitmark').className, kf=$('killfeed').children.length, kft=$('killfeed').textContent;
+    showDmgDir(P.x, P.z-5); const front=$('dmgarc').style.transform;
+    showDmgDir(P.x+5, P.z); const right=$('dmgarc').style.transform;
+    G.ammo.pistol.mag=3; startReload();
+    setTimeout(()=>{ const rb=$('reloadbar').style.display, rw=$('reloadfill').style.width;
+      const ch=$('caT').style.transform, cs=$('cstrip').style.transform;
+      document.title='QC15 ticks='+ticks+' hitmark=['+hm+'] killfeed='+kf+' "'+kft+'" frente='+front+
+        ' derecha='+right+' recarga='+rb+'/'+rw+' mira=['+ch+'] brujula=['+(cs?'ok':'')+']';
+    }, 700);
   }, 700); });
 }
 </script>
