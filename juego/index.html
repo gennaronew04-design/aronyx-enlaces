@@ -43,6 +43,8 @@
   #face { position:fixed; inset:0; z-index:30; display:none; align-items:center; justify-content:center; pointer-events:none; }
   #face .f { font-size:64vmin; line-height:1; filter: drop-shadow(0 0 30px #000); }
   #vig { position:fixed; inset:0; pointer-events:none; z-index:15; background:radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,.55) 100%); }
+  #rotate { position:fixed; inset:0; z-index:33; display:none; align-items:center; justify-content:center; text-align:center; background:rgba(0,0,0,.85); color:#e9cf8a; font-size:24px; letter-spacing:2px; line-height:1.5; padding:20px; }
+  #rotate small { color:#b7ab8c; font-size:15px; letter-spacing:1px; }
   .touch { position:fixed; z-index:26; display:none; }
   #joy { left:18px; bottom:86px; width:118px; height:118px; border-radius:50%; border:1.5px solid rgba(216,198,144,.4); background:rgba(20,16,8,.3); pointer-events:auto; }
   #stick { position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px; border-radius:50%; background:rgba(216,198,144,.35); }
@@ -64,6 +66,7 @@
 <body>
 <div id="game"></div>
 <div id="vig"></div>
+<div id="rotate"><div>📱↔️<br>GIRA TU TELÉFONO<br><small>La Gema Prohibida se juega en horizontal</small></div></div>
 <div id="blood"></div>
 <div id="face"><div class="f">💀</div></div>
 
@@ -91,7 +94,7 @@
   <h1>ARONYX</h1>
   <h2>LA GEMA PROHIBIDA</h2>
   <p>La casa de la Orden despierta con la niebla. Las Sombras obedecen una orden de hace cien años: que nadie toque la Gema. Sobrevive a las oleadas, encuentra las armas de plata y releva al Guardián… si la casa te deja.</p>
-  <p style="font-size:13px;color:#8f8262">🖱️ Ratón para mirar · WASD para moverte · Click para disparar · E para usar<br>📱 En tableta/teléfono: joystick, arrastra para mirar, botón FUEGO</p>
+  <p style="font-size:13px;color:#8f8262">🖱️ Ratón para mirar · WASD para moverte · Click para disparar · E para usar<br>📱 En tableta/teléfono: joystick, arrastra para mirar, botón FUEGO · se juega en horizontal</p>
   <button class="btn" id="play">ENTRAR EN LA CASA</button>
   <div class="warn">⚠ TERROR CON SUSTOS Y GORE — SOLO VALIENTES</div>
 </div>
@@ -642,6 +645,8 @@ function updateEnemies(dt){ const alive=[];
 const clock = new THREE.Clock();
 let elapsed = 0;
 function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta(),.05);
+  const rh=$('rotate');
+  if(rh) rh.style.display = (isTouch && innerHeight>innerWidth && (G.mode==='play'||G.mode==='note'))? 'flex':'none';
   if(G.mode==='play' || G.mode==='note'){ elapsed+=dt;
     if(G.mode==='play'){
       // movimiento
@@ -726,6 +731,9 @@ function resetGame(){ G.hp=100; G.pts=0; G.kills=0; G.wave=0; G.bloodO=0; P.dead
   P.x=0; P.z=9; P.yaw=0; P.pitch=0; elapsed=0; G.guardianSpawned=false; G.guardianDead=false;
   updateHUD(); buildWeaponButtons(); }
 $('play').addEventListener('click', ()=>{ AU.init(); AU.ctx.resume && AU.ctx.resume();
+  if(isTouch){ const el=document.documentElement;
+    if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }
   $('start').style.display='none'; $('hud').style.display='block'; G.mode='play';
   resetGame(); startWave(1); });
 $('retry').addEventListener('click', ()=>location.reload());
