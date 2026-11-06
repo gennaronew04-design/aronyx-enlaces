@@ -339,9 +339,10 @@ footer a{color:var(--gold-l)}
           <div class="ok-ring"><svg width="38" height="38" viewBox="0 0 24 24" fill="none"><path d="M4 12.5 L10 18 L20 6" stroke="#d8b25a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <h3>¡Reserva recibida!</h3>
           <p class="ref" id="refCode">ALB-000000</p>
-          <p>Alberto recibe tu solicitud al momento y te confirma por teléfono. Guarda tu código de referencia.</p>
+          <p>Toca el botón verde y tu reserva le llega a Alberto por WhatsApp al momento, con todos los datos. Él te confirma por teléfono. Guarda tu código de referencia.</p>
           <div class="summary" id="summary2" style="text-align:left;margin-top:22px"></div>
           <div class="cta-row">
+            <a class="btn" id="waSend" href="#" target="_blank" rel="noopener" style="background:#1faa55;color:#fff">ENVIAR MI RESERVA A ALBERTO</a>
             <a class="btn gold" href="#propina">DEJAR PROPINA AHORA</a>
             <a class="btn glass" href="https://gennaronew04-design.github.io/aronyx-enlaces/alberto/">GUARDAR MI CONTACTO</a>
           </div>
@@ -494,6 +495,14 @@ footer a{color:var(--gold-l)}
     if(!ok)return;
     var ref='ALB-'+Math.random().toString(36).slice(2,8).toUpperCase();
     document.getElementById('refCode').textContent=ref;
+    var wa=['Hola Alberto, hice una reserva en tu web 🚖','Código: '+ref,
+      'Nombre: '+val('fNombre'),'Teléfono: '+val('fTel'),
+      'Servicio: '+S.servicio,'Fecha: '+fechaBonita(val('fFecha'))+' · Hora: '+horaBonita(val('fHora')),
+      'Recogida: '+val('fDesde'),'Destino: '+val('fHasta'),
+      'Pasajeros: '+S.pasajeros,'Equipaje: '+val('fEquipaje'),
+      'Pago: '+S.pago,'Propina: '+S.propina];
+    if(val('fNotas'))wa.push('Notas: '+val('fNotas'));
+    document.getElementById('waSend').href='https://wa.me/17863257060?text='+encodeURIComponent(wa.join('\n'));
     document.getElementById('summary2').innerHTML=
       '<div><span>Nombre</span><b>'+val('fNombre')+'</b></div>'+
       '<div><span>Teléfono</span><b>'+val('fTel')+'</b></div>'+summaryHTML();
