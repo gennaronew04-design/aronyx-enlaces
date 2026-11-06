@@ -99,6 +99,11 @@
   #fire { right:22px; bottom:96px; width:86px; height:86px; border-radius:50%; border:1.5px solid rgba(200,60,60,.65); background:rgba(90,10,16,.4); color:#ffb9b9; font-size:15px; letter-spacing:1px; pointer-events:auto; font-family:inherit; }
   #act { right:34px; bottom:196px; width:60px; height:60px; border-radius:50%; border:1.5px solid rgba(216,198,144,.55); background:rgba(30,24,10,.45); color:#ffe9a8; font-size:13px; pointer-events:auto; font-family:inherit; display:none; }
   #reload { right:112px; bottom:200px; width:62px; height:62px; border-radius:50%; border:1.5px solid rgba(216,198,144,.55); background:rgba(30,24,10,.45); color:#ffe9a8; font-size:11px; letter-spacing:.5px; pointer-events:auto; font-family:inherit; display:none; }
+  #aim { right:186px; bottom:200px; width:62px; height:62px; border-radius:50%; border:1.5px solid rgba(160,200,255,.55); background:rgba(10,20,34,.45); color:#bcd8ff; font-size:11px; letter-spacing:.5px; pointer-events:auto; font-family:inherit; display:none; }
+  #aim.on { background:rgba(70,120,190,.55); color:#fff; border-color:#cfe6ff; }
+  #scope { position:fixed; inset:0; display:none; pointer-events:none; z-index:17; background:radial-gradient(circle at 50% 50%, transparent 0 30.5%, rgba(0,0,0,.985) 33.5%); }
+  #scope .sc-h { position:absolute; left:19%; right:19%; top:50%; height:1px; background:rgba(8,8,8,.85); }
+  #scope .sc-v { position:absolute; top:19%; bottom:19%; left:50%; width:1px; background:rgba(8,8,8,.85); }
   #weaps { position:fixed; right:14px; bottom:14px; z-index:26; display:none; gap:8px; }
   #weaps button { pointer-events:auto; background:rgba(0,0,0,.55); color:#d8c690; border:1px solid #8a6d34; padding:8px 10px; font-family:inherit; font-size:13px; }
   #weaps button.on { background:#3a2c10; color:#ffe9a8; }
@@ -155,7 +160,9 @@
 <button id="fire" class="touch">FUEGO</button>
 <button id="act" class="touch">USAR</button>
 <button id="reload" class="touch">RECARGA</button>
+<button id="aim" class="touch">MIRA</button>
 <div id="weaps"></div>
+<div id="scope"><div class="sc-h"></div><div class="sc-v"></div></div>
 
 <div id="note"><div class="card"><h3 id="ntitle"></h3><p id="ntext"></p><button class="btn" id="nclose">Seguir</button></div></div>
 
@@ -1192,6 +1199,9 @@ function bloodPool(x,z,s,gy){ const p=new THREE.Mesh(new THREE.CircleGeometry(s|
 /* Vista del arma en mano: las tres armas reales, una visible según la elegida */
 const viewRoot = new THREE.Group();
 viewRoot.position.set(.27,-.25,-.5); camera.add(viewRoot); scene.add(camera);
+/* Tanda 2: poses ADS por arma — la mira (alza/punto/eje de la mira telescópica)
+   queda sobre el eje de la cámara: y = −(altura de la mira del modelo). */
+const ADS_POS = { pistol:[0,-.083,-.40], shotgun:[0,-.073,-.42], rifle:[0,-.115,-.38] };
 const viewPistol=buildPistol(), viewShotgun=buildShotgun(), viewRifle=buildRifle();
 viewPistol.group.position.set(0,-.02,.02);
 viewShotgun.group.position.set(0,-.03,-.12);
@@ -1252,7 +1262,11 @@ const mix3=(a,b,k)=>[a[0]+(b[0]-a[0])*k, a[1]+(b[1]-a[1])*k, a[2]+(b[2]-a[2])*k]
 function updateHandsAnim(dt){
   G.kick = Math.max(0, G.kick-dt*7);
   const cur=G.cur, sm=1-Math.exp(-dt*16);
-  let rX=.27, rY=-.25, rZ=-.5+G.kick*.05, rRX=0, rRZ=0;
+  // Tanda 2: progreso de ADS (apuntar por la mira) — al recargar, la mira baja sola
+  const adsWanted = (P.adsHeld||P.adsTouch) && !G.reloading && G.mode==='play' && !P.dead;
+  G.adsT = clamp((G.adsT||0) + ((adsWanted?1:0)-(G.adsT||0))*Math.min(1,dt*11), 0, 1);
+  const AP = ADS_POS[cur], aT = G.adsT;
+  let rX=.27+(AP[0]-.27)*aT, rY=-.25+(AP[1]+.25)*aT, rZ=-.5+G.kick*.05+(AP[2]+.5)*aT, rRX=0, rRZ=0;
   let slideZ=-.04+G.kick*.04, pumpZ=-.3+G.kick*.08;
   let hRt=GRIPS[cur].p, hRr=GRIPS[cur].r, hLt=HL_REST, hLr=HL_REST_R;
   let magVis=true, magOff=0, newMag=false, boltK=0;
@@ -1313,10 +1327,14 @@ function shoot(){ const now = performance.now()/1000, W = WEAPONS[G.cur];
   updateHUD();
   if(A.mag===0 && A.res>0) setTimeout(()=>{ if(!G.reloading && G.ammo[G.cur].mag===0) startReload(); }, 420);
   G.kick=1;
+  // Tanda 2: impulso al muelle de retroceso (cada arma empuja distinto)
+  G.rec.v += G.cur==='shotgun'?2.4 : G.cur==='rifle'?1.6 : 1.25;
+  G.rec.yv += rand(-.14,.14);
   const origin = camera.position.clone();
   for(let p=0;p<W.pellets;p++){
     const dir = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
-    dir.x += rand(-W.spread,W.spread); dir.y += rand(-W.spread,W.spread); dir.z += rand(-W.spread,W.spread);
+    const sf=1-.7*(G.adsT||0);   // Tanda 2: apuntando, el cono se cierra
+    dir.x += rand(-W.spread*sf,W.spread*sf); dir.y += rand(-W.spread*sf,W.spread*sf); dir.z += rand(-W.spread*sf,W.spread*sf);
     dir.normalize();
     // auto-aim suave (10°): corrige hacia la Sombra más cercana al centro
     const EL = (MP.active && !MP.host)? MP.foeList() : G.enemies;
@@ -1375,6 +1393,7 @@ const Scares = { portraitDone:false, silhouetteDone:false, thunderDone:false, bl
     lantern.intensity=0; AU.whisper(); setTimeout(()=>{ lantern.intensity=2.3; },1250); } };
 G.fx = []; G.shake = 0; G.bloodO = 0;
 G.projs = []; G.mounds = []; G.acidO = 0; G.screams = 0; G.lurkT = 0; G.kick = 0;
+G.adsT = 0; G.rec = { p:0, v:0, y:0, yv:0 };   // Tanda 2: ADS + retroceso con muelle
 
 /* ---------------- CONTROLES ---------------- */
 const keys = {}; let firing=false, isTouch=false;
@@ -1390,8 +1409,10 @@ renderer.domElement.addEventListener('click', ()=>{ if(G.mode==='play' && !isTou
 document.addEventListener('pointerlockchange', ()=>{ P.locked = document.pointerLockElement===renderer.domElement; });
 addEventListener('mousemove', e=>{ if(!P.locked||G.mode!=='play') return;
   P.yaw -= e.movementX*.0022; P.pitch = clamp(P.pitch - e.movementY*.0022, -1.2, 1.2); });
-addEventListener('mousedown', e=>{ if(P.locked) firing=true; });
-addEventListener('mouseup', ()=> firing=false);
+addEventListener('mousedown', e=>{ if(!P.locked) return;
+  if(e.button===0) firing=true; if(e.button===2) P.adsHeld=true; });
+addEventListener('mouseup', e=>{ if(e.button===0) firing=false; if(e.button===2) P.adsHeld=false; });
+addEventListener('contextmenu', e=> e.preventDefault());
 /* Táctil */
 const joyVec={x:0,y:0}; let lookTouch=null, lookLast={x:0,y:0};
 function setupTouch(){ isTouch=true;
@@ -1418,7 +1439,9 @@ function setupTouch(){ isTouch=true;
   $('fire').addEventListener('touchend', ()=> firing=false);
   $('act').addEventListener('touchstart', e=>{ e.preventDefault(); interact(); }, {passive:false});
   $('reload').addEventListener('touchstart', e=>{ e.preventDefault(); startReload(); }, {passive:false});
-  $('reload').style.display='block'; }
+  $('reload').style.display='block';
+  $('aim').addEventListener('touchstart', e=>{ e.preventDefault();
+    P.adsTouch=!P.adsTouch; $('aim').classList.toggle('on', !!P.adsTouch); }, {passive:false}); }
 addEventListener('touchstart', function once(){ setupTouch();
   removeEventListener('touchstart', once); }, { once:true });
 
@@ -1804,6 +1827,7 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
     if(G.mode==='play'){
       // movimiento
       let sp = (keys.ShiftLeft||keys.ShiftRight)?5.6:4.1;
+      sp *= 1-.45*(G.adsT||0);   // Tanda 2: apuntando se avanza despacio y firme
       if(!isInside(P.x,P.z) && terrainH(P.x,P.z)<-3.1) sp*=.55;   // vadeando el arroyo
       let mx=0, mz=0;
       if(keys.KeyW||keys.ArrowUp) mz+=1; if(keys.KeyS||keys.ArrowDown) mz-=1;
@@ -1915,7 +1939,18 @@ function loop(){ requestAnimationFrame(loop); const dt=Math.min(clock.getDelta()
     const bobA = (Math.hypot(joyVec.x,joyVec.y)>.1||keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD)? Math.sin(elapsed*7)*.022 : 0;
     const pgy = isInside(P.x,P.z)?0:terrainH(P.x,P.z);
     camera.position.set(P.x+shx, pgy+P.y+bobA+shy, P.z);
-    camera.rotation.set(0,0,0); camera.rotateY(P.yaw); camera.rotateX(P.pitch);
+    { // Tanda 2: muelle de retroceso + FOV de mira + visor del rifle
+      const R=G.rec, k=210, c=15;
+      R.v += (-k*R.p - c*R.v)*dt; R.p += R.v*dt;
+      R.yv += (-k*R.y - c*R.yv)*dt; R.y += R.yv*dt;
+      const fovT = G.cur==='rifle' ? 72-42*G.adsT : 72-22*G.adsT;
+      if(Math.abs(camera.fov-fovT)>.01){ camera.fov += (fovT-camera.fov)*Math.min(1,dt*13);
+        camera.updateProjectionMatrix(); }
+      $('scope').style.display = (G.cur==='rifle' && G.adsT>.6 && G.mode==='play') ? 'block':'none';
+      viewRoot.visible = !(G.cur==='rifle' && G.adsT>.75);   // en el visor se mira POR la mira: el modelo sobra
+      const chOp = G.adsT>.55 ? '0':'1';
+      $('crosshair').style.opacity=chOp; $('cross').style.opacity=chOp; }
+    camera.rotation.set(0,0,0); camera.rotateY(P.yaw + G.rec.y); camera.rotateX(P.pitch + G.rec.p);
     lantern.position.copy(camera.position);
     lantern.target.position.copy(camera.position).add(new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion));
     lantern.intensity = 2.3 + Math.sin(elapsed*31)*.07 + (Math.random()<.012? -.6:0);
@@ -2167,6 +2202,41 @@ if(new URLSearchParams(location.search).get('qc')==='16'){
         ' skin=#'+HANDMATS.skin.color.getHexString()+' chaqueta=#'+HANDMATS.jacket.color.getHexString();
     }, 1600);
   }, 700); });
+}
+/* QC18: Tanda 2 — ADS (adsT, FOV, pose) y muelle de retroceso. */
+if(new URLSearchParams(location.search).get('qc')==='18'){
+  addEventListener('load', ()=>{ setTimeout(()=>{ $('play').click();
+    const w=new URLSearchParams(location.search).get('w')||'pistol';
+    G.hp=100000; G.spawnQueue.length=0;
+    if(w!=='pistol'){ G.weapons[w]=true; buildWeaponButtons(); setWeapon(w); }
+    P.adsTouch=true;
+    setTimeout(()=>{ const t1='adsT='+G.adsT.toFixed(2)+' fov='+camera.fov.toFixed(0)+
+      ' root='+viewRoot.position.x.toFixed(2)+','+viewRoot.position.y.toFixed(2)+','+viewRoot.position.z.toFixed(2)+
+      ' scope='+$('scope').style.display+' crossOp='+$('crosshair').style.opacity;
+      shoot();
+      setTimeout(()=>{ const pk=G.rec.p;
+        setTimeout(()=>{ document.title='QC18 '+w+' '+t1+' picoRec='+pk.toFixed(3)+
+          ' resto='+Math.abs(G.rec.p).toFixed(3); }, 550);
+      }, 90);
+    }, 1100);
+  }, 700); });
+}
+/* QC19: Tanda 2 determinista — ADS forzado a 1, pose exacta, visor y curva del muelle. */
+if(new URLSearchParams(location.search).get('qc')==='19'){
+  addEventListener('load', ()=>{ setTimeout(()=>{ try{ $('play').click();
+    const w=new URLSearchParams(location.search).get('w')||'pistol';
+    G.hp=100000; G.spawnQueue.length=0;
+    if(w!=='pistol'){ G.weapons[w]=true; buildWeaponButtons(); setWeapon(w); }
+    P.adsTouch=true; G.adsT=1;
+    camera.fov = w==='rifle'?30:50; camera.updateProjectionMatrix();
+    for(let i=0;i<6;i++) updateHandsAnim(.016);
+    const rp=viewRoot.position;
+    let pk=0, rest=0; { const R={p:0,v:.85}, k=210, c=15, dt=1/60;
+      for(let i=0;i<90;i++){ R.v+=(-k*R.p-c*R.v)*dt; R.p+=R.v*dt;
+        if(i<30) pk=Math.max(pk,R.p); if(i===60) rest=Math.abs(R.p); } }
+    document.title='QC19 '+w+' root='+rp.x.toFixed(2)+','+rp.y.toFixed(2)+','+rp.z.toFixed(2)+
+      ' scope='+$('scope').style.display+' picoMuelle='+pk.toFixed(3)+' resto60='+rest.toFixed(3);
+  }catch(err){ document.title='QC19 ERROR '+err.message; } }, 700); });
 }
 </script>
 </body>
